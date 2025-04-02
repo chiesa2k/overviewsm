@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financeiro com Logo e Gráficos - Jan a Abr</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilo para fonte Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* cinza claro de fundo */
+        }
+        /* Estilo para os cards */
+        .data-card {
+            background-color: white;
+            border-radius: 0.5rem; /* cantos arredondados */
+            padding: 1.5rem; /* espaçamento interno */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* sombra */
+            transition: transform 0.2s ease-in-out; /* transição suave */
+            display: flex; /* Habilita flexbox */
+            flex-direction: column; /* Organiza itens verticalmente */
+            height: 100%; /* Faz o card ocupar a altura disponível no grid */
+        }
+        .data-card:hover {
+            transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
+        }
+        .card-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.125rem; /* tamanho da fonte do título */
+            font-weight: 600; /* peso da fonte */
+            color: #1f2937; /* cor do título */
+            margin-bottom: 1rem; /* margem inferior */
+            flex-shrink: 0; /* Impede que o título encolha */
+        }
+        .card-title i {
+            margin-right: 0.5rem; /* espaço entre ícone e texto */
+            color: #4f46e5; /* cor do ícone */
+        }
+        .total-value {
+            font-size: 1.5rem; /* tamanho da fonte do total */
+            font-weight: 700; /* peso da fonte */
+            color: #16a34a; /* cor verde para valores positivos */
+            margin-bottom: 1rem; /* margem inferior */
+             flex-shrink: 0; /* Impede que o total encolha */
+        }
+        .pending-value {
+            color: #dc2626; /* cor vermelha para valores pendentes */
+        }
+        .chart-container {
+            position: relative;
+            flex-grow: 1; /* Permite que o container do gráfico cresça */
+            margin-bottom: 1rem; /* Espaço abaixo do gráfico */
+            min-height: 150px; /* Altura mínima para o gráfico */
+        }
+        .monthly-data {
+             flex-shrink: 0; /* Impede que os dados mensais encolham */
+        }
+        .monthly-data p {
+            margin-bottom: 0.5rem; /* espaço entre linhas mensais */
+            color: #4b5563; /* cor do texto mensal */
+            display: flex;
+            justify-content: space-between; /* Alinha mês e valor */
+        }
+        .monthly-data span {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+
+    <header class="mb-8 flex items-center space-x-4">
+        <img
+            src="https://i.postimg.cc/ydCgL04c/e4d3aeb7-dbb0-4a0a-b249-7859f2985440.png"
+            alt="Logo da Empresa"
+            class="h-10 md:h-12"  /* Altura ajustável do logo */
+            onerror="this.style.display='none'" /* Oculta se a imagem falhar */
+         >
+         <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard de Resultados – Janeiro a Abril</h1>
+            <p class="text-gray-600">Resumo dos principais indicadores financeiros e operacionais.</p>
+        </div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <section class="data-card">
+            <h2 class="card-title">
+                <i data-lucide="dollar-sign"></i>
+                Faturamento (Receita Bruta)
+            </h2>
+            <div class="total-value">R$ 9.431.402,49</div>
+            <div class="chart-container">
+                <canvas id="faturamentoChart"></canvas>
+            </div>
+            <div class="monthly-data text-sm border-t pt-4 mt-4">
+                <p>JAN: <span>R$ 2.885.582,98</span></p>
+                <p>FEV: <span>R$ 4.336.245,51</span></p>
+                <p>MAR: <span>R$ 1.938.821,24</span></p>
+                <p>ABR: <span>R$ 270.752,76</span></p>
+            </div>
+        </section>
+
+        <section class="data-card">
+            <h2 class="card-title">
+                <i data-lucide="shopping-cart"></i>
+                Vendas
+            </h2>
+            <div class="total-value">R$ 10.443.980,75</div>
+            <div class="chart-container">
+                <canvas id="vendasChart"></canvas>
+            </div>
+            <div class="monthly-data text-sm border-t pt-4 mt-4">
+                <p>JAN: <span>R$ 3.523.935,25</span></p>
+                <p>FEV: <span>R$ 6.047.055,73</span></p>
+                <p>MAR: <span>R$ 857.009,77</span></p>
+                <p>ABR: <span>R$ 15.980,00</span></p>
+            </div>
+        </section>
+
+        <section class="data-card">
+            <h2 class="card-title">
+                <i data-lucide="alert-circle"></i>
+                BM Pendente
+            </h2>
+            <div class="total-value pending-value">R$ 3.858.248,77</div>
+            <p class="text-gray-600 mb-2 text-sm">Total Pendente (Valor)</p>
+            <div class="border-t pt-4 mt-4">
+                 <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens: 62</p>
+                 <div class="monthly-data text-sm">
+                    <p>JAN: <span>13 itens</span></p>
+                    <p>FEV: <span>21 itens</span></p>
+                    <p>MAR: <span>26 itens</span></p>
+                    <p>ABR: <span>10 itens</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-card">
+            <h2 class="card-title">
+                <i data-lucide="file-warning"></i>
+                Relatórios Pendentes
+            </h2>
+            <div class="total-value pending-value">R$ 3.004.759,88</div>
+             <p class="text-gray-600 mb-2 text-sm">Total Pendente (Valor)</p>
+             <div class="border-t pt-4 mt-4">
+                <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens: 64</p>
+                <div class="monthly-data text-sm">
+                    <p>JAN: <span>12 itens</span></p>
+                    <p>FEV: <span>27 itens</span></p>
+                    <p>MAR: <span>25 itens</span></p>
+                    <p>ABR: <span class="text-green-600 font-semibold">0 itens</span></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-10 text-center text-sm text-gray-500">
+        Dados referentes ao período de Janeiro a Abril. Última atualização: 02/04/2025.
+    </footer>
+
+    <script>
+      // Inicializa Lucide Icons
+      lucide.createIcons();
+
+      // Função para formatar números como moeda Brasileira (BRL)
+      const formatCurrency = (value) => {
+          return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      };
+
+      // --- Configuração Gráfico Faturamento ---
+      const faturamentoCtx = document.getElementById('faturamentoChart').getContext('2d');
+      const faturamentoData = {
+          labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+          datasets: [{
+              label: 'Faturamento Mensal',
+              data: [2885582.98, 4336245.51, 1938821.24, 270752.76],
+              backgroundColor: 'rgba(79, 70, 229, 0.6)', // Cor Indigo-600 com transparência
+              borderColor: 'rgba(79, 70, 229, 1)', // Cor Indigo-600 sólida
+              borderWidth: 1,
+              borderRadius: 4, // Bordas arredondadas nas barras
+          }]
+      };
+      const faturamentoConfig = {
+          type: 'bar',
+          data: faturamentoData,
+          options: {
+              responsive: true,
+              maintainAspectRatio: false, // Permite que o gráfico se ajuste ao container
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      ticks: {
+                          // Formata os ticks do eixo Y como moeda
+                          callback: function(value, index, values) {
+                              // Mostra em Milhões (M) ou Mil (K) dependendo da escala
+                              if (value >= 1000000) {
+                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+                              } else if (value >= 1000) {
+                                return 'R$ ' + (value / 1000).toFixed(0) + 'K';
+                              }
+                              return 'R$ ' + value;
+                          }
+                      }
+                  },
+                  x: {
+                     grid: {
+                         display: false // Remove linhas de grade do eixo X
+                     }
+                  }
+              },
+              plugins: {
+                  legend: {
+                      display: false // Oculta a legenda (já está no título do card)
+                  },
+                  tooltip: {
+                      callbacks: {
+                          // Formata o valor no tooltip como moeda
+                          label: function(context) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  label += formatCurrency(context.parsed.y);
+                              }
+                              return label;
+                          }
+                      }
+                  }
+              }
+          }
+      };
+      new Chart(faturamentoCtx, faturamentoConfig);
+
+      // --- Configuração Gráfico Vendas ---
+      const vendasCtx = document.getElementById('vendasChart').getContext('2d');
+      const vendasData = {
+          labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+          datasets: [{
+              label: 'Vendas Mensais',
+              data: [3523935.25, 6047055.73, 857009.77, 15980.00],
+              backgroundColor: 'rgba(22, 163, 74, 0.6)', // Cor Green-600 com transparência
+              borderColor: 'rgba(22, 163, 74, 1)', // Cor Green-600 sólida
+              borderWidth: 1,
+              borderRadius: 4,
+          }]
+      };
+      const vendasConfig = {
+          type: 'bar',
+          data: vendasData,
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                       ticks: {
+                          // Formata os ticks do eixo Y como moeda
+                          callback: function(value, index, values) {
+                              // Mostra em Milhões (M) ou Mil (K) dependendo da escala
+                              if (value >= 1000000) {
+                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+                              } else if (value >= 1000) {
+                                return 'R$ ' + (value / 1000).toFixed(0) + 'K';
+                              }
+                              return 'R$ ' + value;
+                          }
+                      }
+                  },
+                   x: {
+                     grid: {
+                         display: false
+                     }
+                  }
+              },
+              plugins: {
+                  legend: {
+                      display: false
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  label += formatCurrency(context.parsed.y);
+                              }
+                              return label;
+                          }
+                      }
+                  }
+              }
+          }
+      };
+      new Chart(vendasCtx, vendasConfig);
+
+    </script>
+
+</body>
+</html>
