@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financeiro Dinâmico - Jan a Abr</title>
+    <title>Dashboard Financeiro (Valores Atualizados) - Jan a Abr</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -90,7 +90,7 @@
 
     <header class="mb-8 flex items-center space-x-4">
         <img
-            src="https://i.postimg.cc/ydCgL04c/e4d3aeb7-dbb0-4a0a-b249-7859f2985440.png"
+            src="https://placehold.co/120x50/e2e8f0/334155?text=Logo"
             alt="Logo da Empresa"
             class="h-10 md:h-12"
             onerror="this.style.display='none'"
@@ -183,186 +183,208 @@
 
     <script>
         // ========================================================================
-        // DADOS DO DASHBOARD - EDITE OS VALORES AQUI
+        // DADOS DO DASHBOARD - Valores atualizados da imagem
         // ========================================================================
         const dashboardData = {
             // --- FATURAMENTO ---
             faturamento: {
-                jan: 2883336.16,
-                fev: 4382195.51,
-                mar: 1974989.24,
-                abr: 601723.67,
-                totalPeriodo: 9842244.58 // Jan-Abr
+                jan: 2883336.16, // Valor da imagem (convertido para ponto decimal)
+                fev: 4382195.51, // Valor da imagem
+                mar: 1974989.24, // Valor da imagem
+                abr: 601723.67,  // Valor da imagem
+                totalPeriodo: 9842244.58 // Valor da imagem
             },
             // --- VENDAS ---
             vendas: {
-                jan: 3527879.79,
-                fev: 6210252.74,
-                mar: 1160679.41,
-                abr: 72210,
-                totalPeriodo: 10971021.94 // Jan-Abr
+                jan: 3527879.79, // Valor da imagem
+                fev: 6210252.74, // Valor da imagem
+                mar: 1160679.41, // Valor da imagem
+                abr: 72210.00,   // Valor da imagem (assumindo .00)
+                totalPeriodo: 10971021.94 // Valor da imagem
             },
             // --- BM PENDENTE ---
             bmPendente: {
-                jan: 11,
-                fev: 11,
-                mar: 26,
-                abr: 15,
-                totalItensPeriodo: 63,    // Jan-Abr
-                valorTotalPeriodo: 6161201.01 // Jan-Abr
-                valorTotalHistorico: 10142120.53 // Desde 2019
+                jan: 11, // Valor da imagem
+                fev: 11, // Valor da imagem
+                mar: 26, // Valor da imagem
+                abr: 15, // Valor da imagem
+                totalItensPeriodo: 63,    // Valor da imagem
+                valorTotalPeriodo: 6161201.01, // Valor da imagem
+                valorTotalHistorico: 10142120.53 // Valor da imagem
             },
             // --- RELATÓRIOS PENDENTES ---
             relatoriosPendentes: {
-                jan: 10,
-                fev: 20,
-                mar: 27,
-                abr: 0,
-                totalItensPeriodo: 57,    // Jan-Abr
-                valorTotalPeriodo: 3930237.77, // Jan-Abr
-                valorTotalHistorico: 6138665.22  // Desde 2019
+                jan: 10, // Valor da imagem
+                fev: 20, // Valor da imagem
+                mar: 27, // Valor da imagem
+                abr: 0,  // Valor da imagem
+                totalItensPeriodo: 57,    // Valor da imagem
+                valorTotalPeriodo: 3930237.77, // Valor da imagem
+                valorTotalHistorico: 6138665.22  // Valor da imagem
             },
             // --- DATA DA ATUALIZAÇÃO ---
-            dataAtualizacao: "03/04/2025" // Formato DD/MM/AAAA
+            dataAtualizacao: "03/04/2025" // Atualizado para data atual
         };
         // ========================================================================
-        // FIM DA ÁREA DE EDIÇÃO DE DADOS
+        // FIM DA ÁREA DE DADOS
         // ========================================================================
 
 
         // --- FUNÇÕES AUXILIARES ---
-        // Função para formatar números como moeda Brasileira (BRL)
         const formatCurrency = (value) => {
-            if (typeof value !== 'number') return value;
+            if (typeof value !== 'number') {
+                console.warn("[DEBUG] formatCurrency: Valor não é um número:", value);
+                return value;
+            }
             return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         };
 
-        // Função para formatar ticks do eixo Y dos gráficos
         const formatAxisTick = (value) => {
             if (value >= 1000000) return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
             if (value >= 1000) return 'R$ ' + (value / 1000).toFixed(0) + 'K';
             return 'R$ ' + value;
         };
 
-        // Função para atualizar o conteúdo de um elemento HTML pelo ID
         const updateElement = (id, value, formatter) => {
             const element = document.getElementById(id);
+            console.log(`[DEBUG] Tentando atualizar ID: ${id} com Valor: ${value}`);
             if (element) {
-                element.textContent = formatter ? formatter(value) : value;
-                // Adiciona classe especial se for o status de Abril dos relatórios pendentes e for zero
-                if (id === 'relatorios-pendentes-abr' && value === 0) {
-                     element.classList.add('status-abril-zero');
-                } else if (id === 'relatorios-pendentes-abr') {
-                     element.classList.remove('status-abril-zero'); // Remove se não for zero
+                const formattedValue = formatter ? formatter(value) : value;
+                element.textContent = formattedValue;
+                console.log(`[DEBUG] ID: ${id} atualizado para: ${formattedValue}`);
+
+                if (id === 'relatorios-pendentes-abr') {
+                    if (value === 0) {
+                        element.classList.add('status-abril-zero');
+                    } else {
+                        element.classList.remove('status-abril-zero');
+                    }
                 }
             } else {
-                console.warn(`Elemento com ID '${id}' não encontrado.`);
+                console.error(`[DEBUG] ERRO: Elemento com ID '${id}' não encontrado no HTML.`);
             }
         };
 
 
-        // --- LÓGICA PRINCIPAL (Executa quando a página carregar) ---
-        window.onload = () => {
-            // Inicializa Lucide Icons
-            lucide.createIcons();
+        // --- LÓGICA PRINCIPAL ---
+        window.addEventListener('load', () => {
+            console.log("[DEBUG] Evento window.load disparado. Iniciando atualizações...");
 
-            // --- Atualiza os Textos no HTML ---
-            // Faturamento
-            updateElement('faturamento-total', dashboardData.faturamento.totalPeriodo, formatCurrency);
-            updateElement('faturamento-jan', dashboardData.faturamento.jan, formatCurrency);
-            updateElement('faturamento-fev', dashboardData.faturamento.fev, formatCurrency);
-            updateElement('faturamento-mar', dashboardData.faturamento.mar, formatCurrency);
-            updateElement('faturamento-abr', dashboardData.faturamento.abr, formatCurrency);
+            try {
+                lucide.createIcons();
+                console.log("[DEBUG] Lucide Icons inicializados.");
 
-            // Vendas
-            updateElement('vendas-total', dashboardData.vendas.totalPeriodo, formatCurrency);
-            updateElement('vendas-jan', dashboardData.vendas.jan, formatCurrency);
-            updateElement('vendas-fev', dashboardData.vendas.fev, formatCurrency);
-            updateElement('vendas-mar', dashboardData.vendas.mar, formatCurrency);
-            updateElement('vendas-abr', dashboardData.vendas.abr, formatCurrency);
+                console.log("[DEBUG] Atualizando textos do Faturamento...");
+                updateElement('faturamento-total', dashboardData.faturamento.totalPeriodo, formatCurrency);
+                updateElement('faturamento-jan', dashboardData.faturamento.jan, formatCurrency);
+                updateElement('faturamento-fev', dashboardData.faturamento.fev, formatCurrency);
+                updateElement('faturamento-mar', dashboardData.faturamento.mar, formatCurrency);
+                updateElement('faturamento-abr', dashboardData.faturamento.abr, formatCurrency);
 
-            // BM Pendente
-            updateElement('bm-pendente-total-periodo', dashboardData.bmPendente.valorTotalPeriodo, formatCurrency);
-            updateElement('bm-pendente-itens-total', dashboardData.bmPendente.totalItensPeriodo);
-            updateElement('bm-pendente-jan', dashboardData.bmPendente.jan);
-            updateElement('bm-pendente-fev', dashboardData.bmPendente.fev);
-            updateElement('bm-pendente-mar', dashboardData.bmPendente.mar);
-            updateElement('bm-pendente-abr', dashboardData.bmPendente.abr);
-            updateElement('bm-pendente-total-historico', dashboardData.bmPendente.valorTotalHistorico, formatCurrency);
+                console.log("[DEBUG] Atualizando textos das Vendas...");
+                updateElement('vendas-total', dashboardData.vendas.totalPeriodo, formatCurrency);
+                updateElement('vendas-jan', dashboardData.vendas.jan, formatCurrency);
+                updateElement('vendas-fev', dashboardData.vendas.fev, formatCurrency);
+                updateElement('vendas-mar', dashboardData.vendas.mar, formatCurrency);
+                updateElement('vendas-abr', dashboardData.vendas.abr, formatCurrency);
 
-            // Relatórios Pendentes
-            updateElement('relatorios-pendentes-total-periodo', dashboardData.relatoriosPendentes.valorTotalPeriodo, formatCurrency);
-            updateElement('relatorios-pendentes-itens-total', dashboardData.relatoriosPendentes.totalItensPeriodo);
-            updateElement('relatorios-pendentes-jan', dashboardData.relatoriosPendentes.jan);
-            updateElement('relatorios-pendentes-fev', dashboardData.relatoriosPendentes.fev);
-            updateElement('relatorios-pendentes-mar', dashboardData.relatoriosPendentes.mar);
-            updateElement('relatorios-pendentes-abr', dashboardData.relatoriosPendentes.abr);
-            updateElement('relatorios-pendentes-total-historico', dashboardData.relatoriosPendentes.valorTotalHistorico, formatCurrency);
+                console.log("[DEBUG] Atualizando textos de BM Pendente...");
+                updateElement('bm-pendente-total-periodo', dashboardData.bmPendente.valorTotalPeriodo, formatCurrency);
+                updateElement('bm-pendente-itens-total', dashboardData.bmPendente.totalItensPeriodo);
+                updateElement('bm-pendente-jan', dashboardData.bmPendente.jan);
+                updateElement('bm-pendente-fev', dashboardData.bmPendente.fev);
+                updateElement('bm-pendente-mar', dashboardData.bmPendente.mar);
+                updateElement('bm-pendente-abr', dashboardData.bmPendente.abr);
+                updateElement('bm-pendente-total-historico', dashboardData.bmPendente.valorTotalHistorico, formatCurrency);
 
-            // Data de Atualização
-            updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
+                console.log("[DEBUG] Atualizando textos de Relatórios Pendentes...");
+                updateElement('relatorios-pendentes-total-periodo', dashboardData.relatoriosPendentes.valorTotalPeriodo, formatCurrency);
+                updateElement('relatorios-pendentes-itens-total', dashboardData.relatoriosPendentes.totalItensPeriodo);
+                updateElement('relatorios-pendentes-jan', dashboardData.relatoriosPendentes.jan);
+                updateElement('relatorios-pendentes-fev', dashboardData.relatoriosPendentes.fev);
+                updateElement('relatorios-pendentes-mar', dashboardData.relatoriosPendentes.mar);
+                updateElement('relatorios-pendentes-abr', dashboardData.relatoriosPendentes.abr);
+                updateElement('relatorios-pendentes-total-historico', dashboardData.relatoriosPendentes.valorTotalHistorico, formatCurrency);
+
+                console.log("[DEBUG] Atualizando Data de Atualização...");
+                updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
 
 
-            // --- Configuração e Criação dos Gráficos ---
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, ticks: { callback: formatAxisTick } },
-                    x: { grid: { display: false } }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: (context) => `${context.dataset.label || ''}: ${formatCurrency(context.parsed.y)}` } }
+                console.log("[DEBUG] Configurando e criando gráficos...");
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: formatAxisTick } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (context) => `${context.dataset.label || ''}: ${formatCurrency(context.parsed.y)}` } }
+                    }
+                };
+
+                const faturamentoCtx = document.getElementById('faturamentoChart');
+                if (faturamentoCtx) {
+                    new Chart(faturamentoCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+                            datasets: [{
+                                label: 'Faturamento Mensal',
+                                data: [
+                                    dashboardData.faturamento.jan,
+                                    dashboardData.faturamento.fev,
+                                    dashboardData.faturamento.mar,
+                                    dashboardData.faturamento.abr
+                                ],
+                                backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                                borderColor: 'rgba(79, 70, 229, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                    console.log("[DEBUG] Gráfico Faturamento criado.");
+                } else {
+                     console.error("[DEBUG] ERRO: Canvas 'faturamentoChart' não encontrado.");
                 }
-            };
 
-            // Gráfico Faturamento
-            const faturamentoCtx = document.getElementById('faturamentoChart').getContext('2d');
-            new Chart(faturamentoCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['JAN', 'FEV', 'MAR', 'ABR'],
-                    datasets: [{
-                        label: 'Faturamento Mensal',
-                        data: [
-                            dashboardData.faturamento.jan,
-                            dashboardData.faturamento.fev,
-                            dashboardData.faturamento.mar,
-                            dashboardData.faturamento.abr
-                        ],
-                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                        borderColor: 'rgba(79, 70, 229, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                    }]
-                },
-                options: chartOptions
-            });
+                const vendasCtx = document.getElementById('vendasChart');
+                 if (vendasCtx) {
+                    new Chart(vendasCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+                            datasets: [{
+                                label: 'Vendas Mensais',
+                                data: [
+                                    dashboardData.vendas.jan,
+                                    dashboardData.vendas.fev,
+                                    dashboardData.vendas.mar,
+                                    dashboardData.vendas.abr
+                                ],
+                                backgroundColor: 'rgba(22, 163, 74, 0.6)',
+                                borderColor: 'rgba(22, 163, 74, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                    console.log("[DEBUG] Gráfico Vendas criado.");
+                 } else {
+                     console.error("[DEBUG] ERRO: Canvas 'vendasChart' não encontrado.");
+                 }
 
-            // Gráfico Vendas
-            const vendasCtx = document.getElementById('vendasChart').getContext('2d');
-            new Chart(vendasCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['JAN', 'FEV', 'MAR', 'ABR'],
-                    datasets: [{
-                        label: 'Vendas Mensais',
-                        data: [
-                            dashboardData.vendas.jan,
-                            dashboardData.vendas.fev,
-                            dashboardData.vendas.mar,
-                            dashboardData.vendas.abr
-                        ],
-                        backgroundColor: 'rgba(22, 163, 74, 0.6)',
-                        borderColor: 'rgba(22, 163, 74, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                    }]
-                },
-                options: chartOptions
-            });
-        }; // Fim do window.onload
+                 console.log("[DEBUG] Atualizações concluídas.");
+
+            } catch (error) {
+                console.error("[DEBUG] ERRO GERAL durante a inicialização:", error);
+            }
+
+        }); // Fim do window.addEventListener('load', ...)
 
     </script>
 
