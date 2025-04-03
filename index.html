@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financeiro com Logo e Gráficos - Jan a Abr</title>
+    <title>Dashboard Financeiro Dinâmico - Jan a Abr</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -69,6 +69,21 @@
         .monthly-data span {
             font-weight: 500;
         }
+        .historical-total {
+            font-size: 0.875rem; /* Tamanho de fonte menor */
+            color: #6b7280; /* Cor cinza mais escura */
+            margin-top: 0.75rem; /* Espaço acima */
+        }
+        .historical-total span {
+            font-weight: 600; /* Destaca o valor */
+            color: #4b5563;
+        }
+        /* Estilo para o status de Abril em Relatórios Pendentes */
+        .status-abril-zero {
+             color: #16a34a; /* Verde */
+             font-weight: 600;
+        }
+
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -77,8 +92,8 @@
         <img
             src="https://i.postimg.cc/ydCgL04c/e4d3aeb7-dbb0-4a0a-b249-7859f2985440.png"
             alt="Logo da Empresa"
-            class="h-10 md:h-12"  /* Altura ajustável do logo */
-            onerror="this.style.display='none'" /* Oculta se a imagem falhar */
+            class="h-10 md:h-12"
+            onerror="this.style.display='none'"
          >
          <div>
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard de Resultados – Janeiro a Abril</h1>
@@ -93,15 +108,15 @@
                 <i data-lucide="dollar-sign"></i>
                 Faturamento (Receita Bruta)
             </h2>
-            <div class="total-value">R$ 9.732.286,74</div>
+            <div class="total-value" id="faturamento-total">R$ 0,00</div>
             <div class="chart-container">
                 <canvas id="faturamentoChart"></canvas>
             </div>
             <div class="monthly-data text-sm border-t pt-4 mt-4">
-                <p>JAN: <span>R$ 2.885.582,98</span></p>
-                <p>FEV: <span>R$ 4.336.245,51</span></p>
-                <p>MAR: <span>R$ 1.957.393,24</span></p>
-                <p>ABR: <span>R$ 553.065,01</span></p>
+                <p>JAN: <span id="faturamento-jan">R$ 0,00</span></p>
+                <p>FEV: <span id="faturamento-fev">R$ 0,00</span></p>
+                <p>MAR: <span id="faturamento-mar">R$ 0,00</span></p>
+                <p>ABR: <span id="faturamento-abr">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -110,15 +125,15 @@
                 <i data-lucide="shopping-cart"></i>
                 Vendas
             </h2>
-            <div class="total-value">R$ 10.837.646,98</div>
+             <div class="total-value" id="vendas-total">R$ 0,00</div>
             <div class="chart-container">
                 <canvas id="vendasChart"></canvas>
             </div>
             <div class="monthly-data text-sm border-t pt-4 mt-4">
-                <p>JAN: <span>R$ 3.523.935,25</span></p>
-                <p>FEV: <span>R$ 6.047.055,73</span></p>
-                <p>MAR: <span>R$ 1.194.446,00</span></p>
-                <p>ABR: <span>R$ 72.210,00</span></p>
+                <p>JAN: <span id="vendas-jan">R$ 0,00</span></p>
+                <p>FEV: <span id="vendas-fev">R$ 0,00</span></p>
+                <p>MAR: <span id="vendas-mar">R$ 0,00</span></p>
+                <p>ABR: <span id="vendas-abr">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -127,16 +142,17 @@
                 <i data-lucide="alert-circle"></i>
                 BM Pendente
             </h2>
-            <div class="total-value pending-value">R$ 4.594.266,01</div>
-            <p class="text-gray-600 mb-2 text-sm">Total Pendente (Valor)</p>
+            <div class="total-value pending-value" id="bm-pendente-total-periodo">R$ 0,00</div>
+            <p class="text-gray-600 mb-2 text-sm">Total Pendente (Jan-Abr)</p>
             <div class="border-t pt-4 mt-4">
-                 <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens: 62</p>
+                 <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens (Jan-Abr): <span id="bm-pendente-itens-total">0</span></p>
                  <div class="monthly-data text-sm">
-                    <p>JAN: <span>13 itens</span></p>
-                    <p>FEV: <span>21 itens</span></p>
-                    <p>MAR: <span>25 itens</span></p>
-                    <p>ABR: <span>13 itens</span></p>
+                    <p>JAN: <span id="bm-pendente-jan">0</span> itens</p>
+                    <p>FEV: <span id="bm-pendente-fev">0</span> itens</p>
+                    <p>MAR: <span id="bm-pendente-mar">0</span> itens</p>
+                    <p>ABR: <span id="bm-pendente-abr">0</span> itens</p>
                 </div>
+                 <p class="historical-total">Total Geral (desde 2019): <span id="bm-pendente-total-historico">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -145,162 +161,208 @@
                 <i data-lucide="file-warning"></i>
                 Relatórios Pendentes
             </h2>
-            <div class="total-value pending-value">R$ 3.874.704,77</div>
-             <p class="text-gray-600 mb-2 text-sm">Total Pendente (Valor)</p>
+             <div class="total-value pending-value" id="relatorios-pendentes-total-periodo">R$ 0,00</div>
+             <p class="text-gray-600 mb-2 text-sm">Total Pendente (Jan-Abr)</p>
              <div class="border-t pt-4 mt-4">
-                <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens: 58</p>
-                <div class="monthly-data text-sm">
-                    <p>JAN: <span>10 itens</span></p>
-                    <p>FEV: <span>22 itens</span></p>
-                    <p>MAR: <span>26 itens</span></p>
-                    <p>ABR: <span class="text-green-600 font-semibold">0 itens</span></p>
+                 <p class="text-lg font-semibold text-gray-700 mb-2">Total de Itens (Jan-Abr): <span id="relatorios-pendentes-itens-total">0</span></p>
+                 <div class="monthly-data text-sm">
+                    <p>JAN: <span id="relatorios-pendentes-jan">0</span> itens</p>
+                    <p>FEV: <span id="relatorios-pendentes-fev">0</span> itens</p>
+                    <p>MAR: <span id="relatorios-pendentes-mar">0</span> itens</p>
+                    <p>ABR: <span id="relatorios-pendentes-abr">0</span> itens</p>
                 </div>
+                <p class="historical-total">Total Geral (desde 2019): <span id="relatorios-pendentes-total-historico">R$ 0,00</span></p>
             </div>
         </section>
 
     </main>
 
     <footer class="mt-10 text-center text-sm text-gray-500">
-        Dados referentes ao período de Janeiro a Abril. Última atualização: 02/04/2025.
+        Dados referentes ao período de Janeiro a Abril. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>.
     </footer>
 
     <script>
-      // Inicializa Lucide Icons
-      lucide.createIcons();
+        // ========================================================================
+        // DADOS DO DASHBOARD - EDITE OS VALORES AQUI
+        // ========================================================================
+        const dashboardData = {
+            // --- FATURAMENTO ---
+            faturamento: {
+                jan: 2883336.16,
+                fev: 4382195.51,
+                mar: 1974989.24,
+                abr: 601723.67,
+                totalPeriodo: 9842244.58 // Jan-Abr
+            },
+            // --- VENDAS ---
+            vendas: {
+                jan: 3527879.79,
+                fev: 6210252.74,
+                mar: 1160679.41,
+                abr: 72210,
+                totalPeriodo: 10971021.94 // Jan-Abr
+            },
+            // --- BM PENDENTE ---
+            bmPendente: {
+                jan: 11,
+                fev: 11,
+                mar: 26,
+                abr: 15,
+                totalItensPeriodo: 63,    // Jan-Abr
+                valorTotalPeriodo: 6161201.01 // Jan-Abr
+                valorTotalHistorico: 10142120.53 // Desde 2019
+            },
+            // --- RELATÓRIOS PENDENTES ---
+            relatoriosPendentes: {
+                jan: 10,
+                fev: 20,
+                mar: 27,
+                abr: 0,
+                totalItensPeriodo: 57,    // Jan-Abr
+                valorTotalPeriodo: 3930237.77, // Jan-Abr
+                valorTotalHistorico: 6138665.22  // Desde 2019
+            },
+            // --- DATA DA ATUALIZAÇÃO ---
+            dataAtualizacao: "03/04/2025" // Formato DD/MM/AAAA
+        };
+        // ========================================================================
+        // FIM DA ÁREA DE EDIÇÃO DE DADOS
+        // ========================================================================
 
-      // Função para formatar números como moeda Brasileira (BRL)
-      const formatCurrency = (value) => {
-          return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      };
 
-      // --- Configuração Gráfico Faturamento ---
-      const faturamentoCtx = document.getElementById('faturamentoChart').getContext('2d');
-      const faturamentoData = {
-          labels: ['JAN', 'FEV', 'MAR', 'ABR'],
-          datasets: [{
-              label: 'Faturamento Mensal',
-              data: [2885582.98, 4336245.51, 1938821.24, 270752.76],
-              backgroundColor: 'rgba(79, 70, 229, 0.6)', // Cor Indigo-600 com transparência
-              borderColor: 'rgba(79, 70, 229, 1)', // Cor Indigo-600 sólida
-              borderWidth: 1,
-              borderRadius: 4, // Bordas arredondadas nas barras
-          }]
-      };
-      const faturamentoConfig = {
-          type: 'bar',
-          data: faturamentoData,
-          options: {
-              responsive: true,
-              maintainAspectRatio: false, // Permite que o gráfico se ajuste ao container
-              scales: {
-                  y: {
-                      beginAtZero: true,
-                      ticks: {
-                          // Formata os ticks do eixo Y como moeda
-                          callback: function(value, index, values) {
-                              // Mostra em Milhões (M) ou Mil (K) dependendo da escala
-                              if (value >= 1000000) {
-                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
-                              } else if (value >= 1000) {
-                                return 'R$ ' + (value / 1000).toFixed(0) + 'K';
-                              }
-                              return 'R$ ' + value;
-                          }
-                      }
-                  },
-                  x: {
-                     grid: {
-                         display: false // Remove linhas de grade do eixo X
-                     }
-                  }
-              },
-              plugins: {
-                  legend: {
-                      display: false // Oculta a legenda (já está no título do card)
-                  },
-                  tooltip: {
-                      callbacks: {
-                          // Formata o valor no tooltip como moeda
-                          label: function(context) {
-                              let label = context.dataset.label || '';
-                              if (label) {
-                                  label += ': ';
-                              }
-                              if (context.parsed.y !== null) {
-                                  label += formatCurrency(context.parsed.y);
-                              }
-                              return label;
-                          }
-                      }
-                  }
-              }
-          }
-      };
-      new Chart(faturamentoCtx, faturamentoConfig);
+        // --- FUNÇÕES AUXILIARES ---
+        // Função para formatar números como moeda Brasileira (BRL)
+        const formatCurrency = (value) => {
+            if (typeof value !== 'number') return value;
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
 
-      // --- Configuração Gráfico Vendas ---
-      const vendasCtx = document.getElementById('vendasChart').getContext('2d');
-      const vendasData = {
-          labels: ['JAN', 'FEV', 'MAR', 'ABR'],
-          datasets: [{
-              label: 'Vendas Mensais',
-              data: [3523935.25, 6047055.73, 857009.77, 15980.00],
-              backgroundColor: 'rgba(22, 163, 74, 0.6)', // Cor Green-600 com transparência
-              borderColor: 'rgba(22, 163, 74, 1)', // Cor Green-600 sólida
-              borderWidth: 1,
-              borderRadius: 4,
-          }]
-      };
-      const vendasConfig = {
-          type: 'bar',
-          data: vendasData,
-          options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                  y: {
-                      beginAtZero: true,
-                       ticks: {
-                          // Formata os ticks do eixo Y como moeda
-                          callback: function(value, index, values) {
-                              // Mostra em Milhões (M) ou Mil (K) dependendo da escala
-                              if (value >= 1000000) {
-                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
-                              } else if (value >= 1000) {
-                                return 'R$ ' + (value / 1000).toFixed(0) + 'K';
-                              }
-                              return 'R$ ' + value;
-                          }
-                      }
-                  },
-                   x: {
-                     grid: {
-                         display: false
-                     }
-                  }
-              },
-              plugins: {
-                  legend: {
-                      display: false
-                  },
-                  tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              let label = context.dataset.label || '';
-                              if (label) {
-                                  label += ': ';
-                              }
-                              if (context.parsed.y !== null) {
-                                  label += formatCurrency(context.parsed.y);
-                              }
-                              return label;
-                          }
-                      }
-                  }
-              }
-          }
-      };
-      new Chart(vendasCtx, vendasConfig);
+        // Função para formatar ticks do eixo Y dos gráficos
+        const formatAxisTick = (value) => {
+            if (value >= 1000000) return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+            if (value >= 1000) return 'R$ ' + (value / 1000).toFixed(0) + 'K';
+            return 'R$ ' + value;
+        };
+
+        // Função para atualizar o conteúdo de um elemento HTML pelo ID
+        const updateElement = (id, value, formatter) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = formatter ? formatter(value) : value;
+                // Adiciona classe especial se for o status de Abril dos relatórios pendentes e for zero
+                if (id === 'relatorios-pendentes-abr' && value === 0) {
+                     element.classList.add('status-abril-zero');
+                } else if (id === 'relatorios-pendentes-abr') {
+                     element.classList.remove('status-abril-zero'); // Remove se não for zero
+                }
+            } else {
+                console.warn(`Elemento com ID '${id}' não encontrado.`);
+            }
+        };
+
+
+        // --- LÓGICA PRINCIPAL (Executa quando a página carregar) ---
+        window.onload = () => {
+            // Inicializa Lucide Icons
+            lucide.createIcons();
+
+            // --- Atualiza os Textos no HTML ---
+            // Faturamento
+            updateElement('faturamento-total', dashboardData.faturamento.totalPeriodo, formatCurrency);
+            updateElement('faturamento-jan', dashboardData.faturamento.jan, formatCurrency);
+            updateElement('faturamento-fev', dashboardData.faturamento.fev, formatCurrency);
+            updateElement('faturamento-mar', dashboardData.faturamento.mar, formatCurrency);
+            updateElement('faturamento-abr', dashboardData.faturamento.abr, formatCurrency);
+
+            // Vendas
+            updateElement('vendas-total', dashboardData.vendas.totalPeriodo, formatCurrency);
+            updateElement('vendas-jan', dashboardData.vendas.jan, formatCurrency);
+            updateElement('vendas-fev', dashboardData.vendas.fev, formatCurrency);
+            updateElement('vendas-mar', dashboardData.vendas.mar, formatCurrency);
+            updateElement('vendas-abr', dashboardData.vendas.abr, formatCurrency);
+
+            // BM Pendente
+            updateElement('bm-pendente-total-periodo', dashboardData.bmPendente.valorTotalPeriodo, formatCurrency);
+            updateElement('bm-pendente-itens-total', dashboardData.bmPendente.totalItensPeriodo);
+            updateElement('bm-pendente-jan', dashboardData.bmPendente.jan);
+            updateElement('bm-pendente-fev', dashboardData.bmPendente.fev);
+            updateElement('bm-pendente-mar', dashboardData.bmPendente.mar);
+            updateElement('bm-pendente-abr', dashboardData.bmPendente.abr);
+            updateElement('bm-pendente-total-historico', dashboardData.bmPendente.valorTotalHistorico, formatCurrency);
+
+            // Relatórios Pendentes
+            updateElement('relatorios-pendentes-total-periodo', dashboardData.relatoriosPendentes.valorTotalPeriodo, formatCurrency);
+            updateElement('relatorios-pendentes-itens-total', dashboardData.relatoriosPendentes.totalItensPeriodo);
+            updateElement('relatorios-pendentes-jan', dashboardData.relatoriosPendentes.jan);
+            updateElement('relatorios-pendentes-fev', dashboardData.relatoriosPendentes.fev);
+            updateElement('relatorios-pendentes-mar', dashboardData.relatoriosPendentes.mar);
+            updateElement('relatorios-pendentes-abr', dashboardData.relatoriosPendentes.abr);
+            updateElement('relatorios-pendentes-total-historico', dashboardData.relatoriosPendentes.valorTotalHistorico, formatCurrency);
+
+            // Data de Atualização
+            updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
+
+
+            // --- Configuração e Criação dos Gráficos ---
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: formatAxisTick } },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (context) => `${context.dataset.label || ''}: ${formatCurrency(context.parsed.y)}` } }
+                }
+            };
+
+            // Gráfico Faturamento
+            const faturamentoCtx = document.getElementById('faturamentoChart').getContext('2d');
+            new Chart(faturamentoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+                    datasets: [{
+                        label: 'Faturamento Mensal',
+                        data: [
+                            dashboardData.faturamento.jan,
+                            dashboardData.faturamento.fev,
+                            dashboardData.faturamento.mar,
+                            dashboardData.faturamento.abr
+                        ],
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: chartOptions
+            });
+
+            // Gráfico Vendas
+            const vendasCtx = document.getElementById('vendasChart').getContext('2d');
+            new Chart(vendasCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+                    datasets: [{
+                        label: 'Vendas Mensais',
+                        data: [
+                            dashboardData.vendas.jan,
+                            dashboardData.vendas.fev,
+                            dashboardData.vendas.mar,
+                            dashboardData.vendas.abr
+                        ],
+                        backgroundColor: 'rgba(22, 163, 74, 0.6)',
+                        borderColor: 'rgba(22, 163, 74, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: chartOptions
+            });
+        }; // Fim do window.onload
 
     </script>
 
