@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financeiro (Valores Atualizados) - Jan a Abr</title>
+    <title>Dashboard Financeiro (Valores Atualizados) - Jan a Mai</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -117,6 +117,7 @@
                 <p>FEV: <span id="faturamento-fev">R$ 0,00</span></p>
                 <p>MAR: <span id="faturamento-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="faturamento-abr">R$ 0,00</span></p>
+                <p>MAI: <span id="faturamento-abr">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -134,6 +135,7 @@
                 <p>FEV: <span id="vendas-fev">R$ 0,00</span></p>
                 <p>MAR: <span id="vendas-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="vendas-abr">R$ 0,00</span></p>
+                <p>MAI: <span id="vendas-abr">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -151,6 +153,7 @@
                     <p>FEV: <span id="bm-pendente-fev">0</span> itens</p>
                     <p>MAR: <span id="bm-pendente-mar">0</span> itens</p>
                     <p>ABR: <span id="bm-pendente-abr">0</span> itens</p>
+                    <p>MAI: <span id="bm-pendente-abr">0</span> itens</p> 
                 </div>
                  <p class="historical-total">Total Geral (desde 2019): <span id="bm-pendente-total-historico">R$ 0,00</span></p>
             </div>
@@ -170,6 +173,7 @@
                     <p>FEV: <span id="relatorios-pendentes-fev">0</span> itens</p>
                     <p>MAR: <span id="relatorios-pendentes-mar">0</span> itens</p>
                     <p>ABR: <span id="relatorios-pendentes-abr">0</span> itens</p>
+                    <p>MAI: <span id="relatorios-pendentes-abr">0</span> itens</p> 
                 </div>
                 <p class="historical-total">Total Geral (desde 2019): <span id="relatorios-pendentes-total-historico">R$ 0,00</span></p>
             </div>
@@ -191,39 +195,43 @@
                 jan: 2883336.16, // Valor da imagem (convertido para ponto decimal)
                 fev: 4613615.51, // Valor da imagem
                 mar: 1982499.82, // Valor da imagem
-                abr: 3864714,58,  // Valor da imagem
-                totalPeriodo: 1344166.07 // Valor da imagem
+                abr: 3876024,58,  // Valor da imagem
+                mai: 1604213,4,  // Valor da imagem
+                totalPeriodo: 14959689.47 // Valor da imagem
             },
             // --- VENDAS ---
             vendas: {
-                jan: 3518800.79, // Valor da imagem
-                fev: 6082291.74, // Valor da imagem
-                mar: 1294066.49, // Valor da imagem
-                abr: 4502247.74,   // Valor da imagem (assumindo .00)
-                totalPeriodo: 15416508.76 // Valor da imagem
+                jan: 3536102.79, // Valor da imagem
+                fev: 6084091.74, // Valor da imagem
+                mar: 1304794.99, // Valor da imagem
+                abr: 1304794.99, // Valor da imagem
+                mai: 91099.75,   // Valor da imagem (assumindo .00)
+                totalPeriodo: 15423145.26 // Valor da imagem
             },
             // --- BM PENDENTE ---
             bmPendente: {
-                jan: 11, // Valor da imagem
+                jan: 9, // Valor da imagem
                 fev: 4, // Valor da imagem
-                mar: 16, // Valor da imagem
-                abr: 53, // Valor da imagem
-                totalItensPeriodo: 84,    // Valor da imagem
-                valorTotalPeriodo: 5363395.41, // Valor da imagem
-                valorTotalHistorico: 9076240.65 // Valor da imagem
+                mar: 13, // Valor da imagem
+                abr: 47, // Valor da imagem
+                mai: 2, // Valor da imagem
+                totalItensPeriodo: 75,    // Valor da imagem
+                valorTotalPeriodo: 5139629.91, // Valor da imagem
+                valorTotalHistorico: 8852528.48 // Valor da imagem
             },
             // --- RELATÓRIOS PENDENTES ---
             relatoriosPendentes: {
                 jan: 9, // Valor da imagem
                 fev: 4, // Valor da imagem
-                mar: 9, // Valor da imagem
-                abr: 8,  // Valor da imagem
-                totalItensPeriodo: 30,    // Valor da imagem
-                valorTotalPeriodo: 767259.50, // Valor da imagem
-                valorTotalHistorico: 2670396.25  // Valor da imagem
+                mar: 8, // Valor da imagem
+                abr: 7,  // Valor da imagem
+                mai: 1,  // Valor da imagem
+                totalItensPeriodo: 29,    // Valor da imagem
+                valorTotalPeriodo: 826749.55, // Valor da imagem
+                valorTotalHistorico: 2729886.30  // Valor da imagem
             },
             // --- DATA DA ATUALIZAÇÃO ---
-            dataAtualizacao: "28/04/2025" // Atualizado para data atual
+            dataAtualizacao: "06/05/2025" // Atualizado para data atual
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -356,7 +364,7 @@
                     new Chart(vendasCtx.getContext('2d'), {
                         type: 'bar',
                         data: {
-                            labels: ['JAN', 'FEV', 'MAR', 'ABR'],
+                            labels: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI'],
                             datasets: [{
                                 label: 'Vendas Mensais',
                                 data: [
@@ -364,6 +372,7 @@
                                     dashboardData.vendas.fev,
                                     dashboardData.vendas.mar,
                                     dashboardData.vendas.abr
+                                    dashboardData.vendas.mai
                                 ],
                                 backgroundColor: 'rgba(22, 163, 74, 0.6)',
                                 borderColor: 'rgba(22, 163, 74, 1)',
