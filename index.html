@@ -240,15 +240,3 @@
 
 </body>
 </html>
-```
-
-**O que foi alterado:**
-
-1.  **Estrutura dos Cards de Pendências:**
-    * Dentro dos cards de "BM Pendente" e "Relatórios Pendentes", na seção `<div class="monthly-data ...">`, eu adicionei a lista com os `<span>` para cada mês (`bm-pendente-jan`, `relatorios-pendentes-fev`, etc.).
-    * A informação do "Valor Total (Período)" foi mantida dentro desta mesma seção para agrupar todas as informações de detalhe.
-
-2.  **Lógica JavaScript:**
-    * Na parte de "ATUALIZAÇÃO DOS TEXTOS DOS CARDS", adicionei dois novos blocos de código que usam um loop (`Object.entries(...).forEach(...)`) para preencher a contagem de itens de cada mês nos `<span>` que acabamos de criar.
-
-Agora os dois cards de pendências exibirão o total de itens, o gráfico de barras com a distribuição mensal e, logo abaixo, a lista detalhada com a contagem de cada mês, exatamente como você ped
