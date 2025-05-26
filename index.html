@@ -21,9 +21,9 @@
             color: #1f2937; margin-bottom: 0.5rem; flex-shrink: 0;
         }
         .card-title i { margin-right: 0.5rem; }
-        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; flex-shrink: 0; }
+        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; /* Margem restaurada */ flex-shrink: 0; }
         .pending-value { color: #dc2626; }
-        .sparkline-container { position: relative; height: 40px; margin-bottom: 1rem; width: 100%; }
+        /* .sparkline-container removido */
         .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 150px; }
         .monthly-data {
             flex-shrink: 0; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;
@@ -59,7 +59,6 @@
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="dollar-sign" style="color: #4f46e5;"></i>Faturamento (Receita Bruta)</h2>
             <div class="total-value" id="faturamento-total" style="color: #16a34a;">R$ 0,00</div>
-            <div class="sparkline-container"><canvas id="faturamentoSparklineChart"></canvas></div>
             <div class="chart-container"><canvas id="faturamentoChart"></canvas></div>
             <div class="monthly-data text-sm">
                 <p>JAN: <span id="faturamento-jan">R$ 0,00</span></p>
@@ -74,7 +73,6 @@
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="shopping-cart" style="color: #16a34a;"></i>Vendas</h2>
             <div class="total-value" id="vendas-total" style="color: #16a34a;">R$ 0,00</div>
-            <div class="sparkline-container"><canvas id="vendasSparklineChart"></canvas></div>
             <div class="chart-container"><canvas id="vendasChart"></canvas></div>
             <div class="monthly-data text-sm">
                 <p>JAN: <span id="vendas-jan">R$ 0,00</span></p>
@@ -142,12 +140,9 @@
                 jan: 2883336.16, fev: 4613615.51, mar: 1982499.82, 
                 abr: 3876024.58, mai: 2893317.17
             },
-            contasAReceberFaturamento: { // Valores de Contas a Receber (Faturamento)
-                jan: 0,             // Mantenha 0 se não houver dados para Jan
-                fev: 0,             // Mantenha 0 se não houver dados para Fev
-                mar: 682629.37,    // Valor de Março da sua imagem
-                abr: 1383667.71,   // Valor de Abril da sua imagem
-                mai: 168697.00     // Valor de Maio da sua imagem
+            contasAReceberFaturamento: { 
+                jan: 0, fev: 0, mar: 682629.37,    
+                abr: 1383667.71, mai: 168697.00     
             },
             vendas: { 
                 jan: 3532621.29, fev: 6074721.74, mar: 1299044.99, 
@@ -217,7 +212,6 @@
                 const relatoriosItensTotal = Object.values(relatoriosItensData).reduce((a, b) => a + b, 0);
                 const previsaoTotal = dashboardData.previsao.mes1_valor + dashboardData.previsao.mes2_valor + dashboardData.previsao.mes3_valor;
 
-                // ATUALIZAÇÃO DOS TEXTOS
                 updateElement('faturamento-total', faturamentoTotal, formatCurrency);
                 Object.entries(dashboardData.faturamento).forEach(([mes, valor]) => updateElement(`faturamento-${mes}`, valor, formatCurrency));
                 updateElement('faturamento-media', faturamentoMedia, formatCurrency);
@@ -245,25 +239,23 @@
                 updateVariationElement('previsao-var-mes3', dashboardData.previsao.mes3_valor, dashboardData.previsao.mes2_valor);
                 updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
 
-                // --- CRIAÇÃO DOS GRÁFICOS ---
                 const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI'];
                 const chartLabelsPrevisao = [dashboardData.previsao.mes1_label, dashboardData.previsao.mes2_label, dashboardData.previsao.mes3_label];
                 
-                const currencyChartOptions = { 
+                const baseCurrencyChartOptions = { 
                     responsive: true, maintainAspectRatio: false, 
                     scales: { 
                         y: { beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } }, 
                         x: { grid: { display: false } } 
                     }, 
                     plugins: { 
-                        legend: { display: true, position: 'top', labels: { boxWidth:15, padding:15 } }, 
                         tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } 
                     } 
                 };
                 const integerChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } } };
-                const sparklineChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { display: false } }, plugins: { legend: { display: false }, tooltip: { enabled: false } }, elements: { point: { radius: 0 }, line: { borderWidth: 2 } } };
-                
-                // Gráfico Faturamento com linha de Contas a Receber
+                // const sparklineChartOptions removido
+
+                // Gráfico Faturamento com linha de Contas a Receber e legenda abaixo
                 new Chart(document.getElementById('faturamentoChart').getContext('2d'), { 
                     type: 'bar', 
                     data: { 
@@ -290,17 +282,25 @@
                             }
                         ] 
                     }, 
-                    options: currencyChartOptions 
+                    options: {
+                        ...baseCurrencyChartOptions, // Usa a base
+                        plugins: { // Sobrescreve/adiciona plugins
+                            ...baseCurrencyChartOptions.plugins, // Mantém tooltip callback
+                            legend: { 
+                                display: true, 
+                                position: 'bottom', // Legenda abaixo
+                                labels: { boxWidth:15, padding:20 } 
+                            }
+                        }
+                    } 
                 });
 
-                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...currencyChartOptions, plugins: {...currencyChartOptions.plugins, legend: {display: false}}} });
+                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...baseCurrencyChartOptions, plugins: {...baseCurrencyChartOptions.plugins, legend: {display: false}}} });
                 new Chart(document.getElementById('bmPendenteChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(bmItensData), backgroundColor: 'rgba(220, 38, 38, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderRadius: 4 }] }, options: integerChartOptions });
                 new Chart(document.getElementById('relatoriosPendentesChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(relatoriosItensData), backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)', borderRadius: 4 }] }, options: integerChartOptions });
-                new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...currencyChartOptions, plugins: {...currencyChartOptions.plugins, legend: {display: false}}} });
+                new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...baseCurrencyChartOptions, plugins: {...baseCurrencyChartOptions.plugins, legend: {display: false}}} });
 
-                // Sparklines
-                new Chart(document.getElementById('faturamentoSparklineChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Tendência Faturamento', data: faturamentoMensalValores, borderColor: 'rgba(79, 70, 229, 0.8)', fill: false }] }, options: sparklineChartOptions });
-                new Chart(document.getElementById('vendasSparklineChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Tendência Vendas', data: vendasMensalValores, borderColor: 'rgba(22, 163, 74, 0.8)', fill: false }] }, options: sparklineChartOptions });
+                // Sparklines removidos
 
             } catch (error) {
                 console.error("ERRO GERAL durante a inicialização:", error);
