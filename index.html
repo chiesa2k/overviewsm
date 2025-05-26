@@ -21,20 +21,27 @@
             color: #1f2937; margin-bottom: 0.5rem; flex-shrink: 0;
         }
         .card-title i { margin-right: 0.5rem; }
-        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; flex-shrink: 0; }
+        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; flex-shrink: 0; }
         .pending-value { color: #dc2626; }
+        .sparkline-container { position: relative; height: 40px; margin-bottom: 1rem; width: 100%; }
         .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 150px; }
         .monthly-data {
             flex-shrink: 0; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;
         }
         .monthly-data p {
-            margin-bottom: 0.5rem; color: #4b5563; display: flex; justify-content: space-between;
+            margin-bottom: 0.5rem; color: #4b5563; display: flex; justify-content: space-between; align-items: center;
         }
         .monthly-data span { font-weight: 500; }
+        .monthly-data .media-mensal {
+            color: #374151; font-size: 0.875rem; margin-top: 0.75rem;
+            padding-top: 0.5rem; border-top: 1px dashed #d1d5db;
+        }
         .card-subtitle-custom { color: #4b5563; margin-bottom: 0.25rem; font-size: 0.875rem; }
         .card-main-metric { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; }
         .historical-total { font-size: 0.875rem; color: #6b7280; margin-top: 1rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; }
         .historical-total span { font-weight: 600; color: #4b5563; }
+        .var-positive { color: #16a34a; }
+        .var-negative { color: #dc2626; }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -52,6 +59,7 @@
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="dollar-sign" style="color: #4f46e5;"></i>Faturamento (Receita Bruta)</h2>
             <div class="total-value" id="faturamento-total" style="color: #16a34a;">R$ 0,00</div>
+            <div class="sparkline-container"><canvas id="faturamentoSparklineChart"></canvas></div>
             <div class="chart-container"><canvas id="faturamentoChart"></canvas></div>
             <div class="monthly-data text-sm">
                 <p>JAN: <span id="faturamento-jan">R$ 0,00</span></p>
@@ -59,12 +67,14 @@
                 <p>MAR: <span id="faturamento-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="faturamento-abr">R$ 0,00</span></p>
                 <p>MAI: <span id="faturamento-mai">R$ 0,00</span></p> 
+                <p class="media-mensal">Média Mensal: <span id="faturamento-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
 
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="shopping-cart" style="color: #16a34a;"></i>Vendas</h2>
             <div class="total-value" id="vendas-total" style="color: #16a34a;">R$ 0,00</div>
+            <div class="sparkline-container"><canvas id="vendasSparklineChart"></canvas></div>
             <div class="chart-container"><canvas id="vendasChart"></canvas></div>
             <div class="monthly-data text-sm">
                 <p>JAN: <span id="vendas-jan">R$ 0,00</span></p>
@@ -72,6 +82,7 @@
                 <p>MAR: <span id="vendas-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="vendas-abr">R$ 0,00</span></p>
                 <p>MAI: <span id="vendas-mai">R$ 0,00</span></p> 
+                <p class="media-mensal">Média Mensal: <span id="vendas-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
 
@@ -111,12 +122,11 @@
             <p class="card-subtitle-custom">Total Previsto (Próximos 3 Meses)</p>
             <div class="chart-container"><canvas id="previsaoChart"></canvas></div>
             <div class="monthly-data text-sm">
-                <p><span id="previsao-mes1-label">Mês 6</span>: <span id="previsao-mes1-valor" class="font-semibold">R$ 0,00</span></p>
-                <p><span id="previsao-mes2-label">Mês 7</span>: <span id="previsao-mes2-valor" class="font-semibold">R$ 0,00</span></p>
-                <p><span id="previsao-mes3-label">Mês 8</span>: <span id="previsao-mes3-valor" class="font-semibold">R$ 0,00</span></p>
+                <p><span id="previsao-mes1-label">Mês 6</span><span id="previsao-mes1-valor" class="font-semibold">R$ 0,00</span></p>
+                <p><span id="previsao-mes2-label">Mês 7</span><span class="flex items-center"><span id="previsao-mes2-valor" class="font-semibold">R$ 0,00</span><span id="previsao-var-mes2" class="text-xs ml-2 font-semibold"></span></span></p>
+                <p><span id="previsao-mes3-label">Mês 8</span><span class="flex items-center"><span id="previsao-mes3-valor" class="font-semibold">R$ 0,00</span><span id="previsao-var-mes3" class="text-xs ml-2 font-semibold"></span></span></p>
             </div>
         </section>
-
     </main>
 
     <footer class="mt-10 text-center text-sm text-gray-500">
@@ -125,25 +135,38 @@
 
     <script>
         // ========================================================================
-        // DADOS DO DASHBOARD - Cole os valores do Excel aqui
+        // DADOS DO DASHBOARD
         // ========================================================================
         const dashboardData = {
-            faturamento: { jan: 2883336.16, fev: 4613615.51, mar: 1982499.82, abr: 3816848.06, mai: 3431264.87, },
-            vendas: { jan: 3532621.29, fev: 6035697.74, mar: 1299044.99, abr: 4683438.74, mai: 2076242.12, },
+            faturamento: { 
+                jan: 2883336.16, fev: 4613615.51, mar: 1982499.82, 
+                abr: 3876024.58, mai: 2893317.17
+            },
+            contasAReceberFaturamento: { // Valores de Contas a Receber (Faturamento)
+                jan: 0,             // Mantenha 0 se não houver dados para Jan
+                fev: 0,             // Mantenha 0 se não houver dados para Fev
+                mar: 682629.37,    // Valor de Março da sua imagem
+                abr: 1383667.71,   // Valor de Abril da sua imagem
+                mai: 168697.00     // Valor de Maio da sua imagem
+            },
+            vendas: { 
+                jan: 3532621.29, fev: 6074721.74, mar: 1299044.99, 
+                abr: 4627709.99, mai: 989577.57
+            },
             bmPendente: {
-                jan: 9, fev: 3, mar: 10, abr: 32, mai: 21,
-                valorTotalPeriodo: 4838958.71,
+                jan: 9, fev: 3, mar: 11, abr: 36, mai: 22,
+                valorTotalPeriodo: 4917053.39 
             },
             relatoriosPendentes: {
-                jan: 7, fev: 2, mar: 6, abr: 4, mai: 11,
-                valorTotalPeriodo: 898990.00,
+                jan: 9, fev: 4, mar: 7, abr: 6, mai: 7,
+                valorTotalPeriodo: 834348.00 
             },
-            previsao: {
+            previsao: { 
                 mes1_label: "JUN", mes1_valor: 1504698.98,
                 mes2_label: "JUL", mes2_valor: 373255.00,
-                mes3_label: "AGO", mes3_valor: 0,
+                mes3_label: "AGO", mes3_valor: 0.00,
             },
-            dataAtualizacao: "26/05/2025"
+            dataAtualizacao: "26/05/2025" 
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -162,41 +185,55 @@
             const element = document.getElementById(id);
             if (element) element.textContent = formatter ? formatter(value) : value;
         };
+        const updateVariationElement = (elementId, newValue, oldValue) => {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            if (oldValue === 0 || oldValue === null || typeof oldValue === 'undefined' || newValue === null || typeof newValue === 'undefined') { element.textContent = ''; return; }
+            const variation = ((newValue - oldValue) / oldValue);
+            const percentage = (variation * 100).toFixed(1);
+            element.classList.remove('var-positive', 'var-negative');
+            if (variation > 0) { element.textContent = `▲ ${percentage}%`; element.classList.add('var-positive'); }
+            else if (variation < 0) { element.textContent = `▼ ${Math.abs(percentage)}%`; element.classList.add('var-negative'); }
+            else { element.textContent = ''; }
+        };
 
         window.addEventListener('load', () => {
             try {
                 lucide.createIcons();
 
-                const faturamentoTotal = Object.values(dashboardData.faturamento).reduce((a, b) => a + b, 0);
-                const vendasTotal = Object.values(dashboardData.vendas).reduce((a, b) => a + b, 0);
+                const faturamentoMensalValores = Object.values(dashboardData.faturamento);
+                const contasAReceberFaturamentoValores = Object.values(dashboardData.contasAReceberFaturamento);
+                const vendasMensalValores = Object.values(dashboardData.vendas);
+                const faturamentoTotal = faturamentoMensalValores.reduce((a, b) => a + b, 0);
+                const vendasTotal = vendasMensalValores.reduce((a, b) => a + b, 0);
                 
+                const numeroDeMeses = 5;
+                const faturamentoMedia = faturamentoTotal / numeroDeMeses;
+                const vendasMedia = vendasTotal / numeroDeMeses;
+
                 const bmItensData = {jan: dashboardData.bmPendente.jan, fev: dashboardData.bmPendente.fev, mar: dashboardData.bmPendente.mar, abr: dashboardData.bmPendente.abr, mai: dashboardData.bmPendente.mai};
                 const relatoriosItensData = {jan: dashboardData.relatoriosPendentes.jan, fev: dashboardData.relatoriosPendentes.fev, mar: dashboardData.relatoriosPendentes.mar, abr: dashboardData.relatoriosPendentes.abr, mai: dashboardData.relatoriosPendentes.mai};
-                
                 const bmItensTotal = Object.values(bmItensData).reduce((a, b) => a + b, 0);
                 const relatoriosItensTotal = Object.values(relatoriosItensData).reduce((a, b) => a + b, 0);
                 const previsaoTotal = dashboardData.previsao.mes1_valor + dashboardData.previsao.mes2_valor + dashboardData.previsao.mes3_valor;
 
-                // --- ATUALIZAÇÃO DOS TEXTOS DOS CARDS ---
-                // Faturamento
+                // ATUALIZAÇÃO DOS TEXTOS
                 updateElement('faturamento-total', faturamentoTotal, formatCurrency);
                 Object.entries(dashboardData.faturamento).forEach(([mes, valor]) => updateElement(`faturamento-${mes}`, valor, formatCurrency));
-                
-                // Vendas
+                updateElement('faturamento-media', faturamentoMedia, formatCurrency);
+
                 updateElement('vendas-total', vendasTotal, formatCurrency);
                 Object.entries(dashboardData.vendas).forEach(([mes, valor]) => updateElement(`vendas-${mes}`, valor, formatCurrency));
+                updateElement('vendas-media', vendasMedia, formatCurrency);
 
-                // BM Pendente (Total, Valor, e lista mensal de itens)
                 updateElement('bm-pendente-itens-total', bmItensTotal, formatInt);
                 updateElement('bm-pendente-total-periodo', dashboardData.bmPendente.valorTotalPeriodo, formatCurrency);
                 Object.entries(bmItensData).forEach(([mes, valor]) => updateElement(`bm-pendente-${mes}`, valor, formatInt));
-
-                // Relatórios Pendentes (Total, Valor, e lista mensal de itens)
+                
                 updateElement('relatorios-pendentes-itens-total', relatoriosItensTotal, formatInt);
                 updateElement('relatorios-pendentes-total-periodo', dashboardData.relatoriosPendentes.valorTotalPeriodo, formatCurrency);
                 Object.entries(relatoriosItensData).forEach(([mes, valor]) => updateElement(`relatorios-pendentes-${mes}`, valor, formatInt));
-
-                // Previsão
+                
                 updateElement('previsao-total', previsaoTotal, formatCurrency);
                 updateElement('previsao-mes1-label', dashboardData.previsao.mes1_label);
                 updateElement('previsao-mes1-valor', dashboardData.previsao.mes1_valor, formatCurrency);
@@ -204,33 +241,66 @@
                 updateElement('previsao-mes2-valor', dashboardData.previsao.mes2_valor, formatCurrency);
                 updateElement('previsao-mes3-label', dashboardData.previsao.mes3_label);
                 updateElement('previsao-mes3-valor', dashboardData.previsao.mes3_valor, formatCurrency);
-                
+                updateVariationElement('previsao-var-mes2', dashboardData.previsao.mes2_valor, dashboardData.previsao.mes1_valor);
+                updateVariationElement('previsao-var-mes3', dashboardData.previsao.mes3_valor, dashboardData.previsao.mes2_valor);
                 updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
 
-                // --- CONFIGURAÇÕES E CRIAÇÃO DOS GRÁFICOS ---
+                // --- CRIAÇÃO DOS GRÁFICOS ---
                 const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI'];
                 const chartLabelsPrevisao = [dashboardData.previsao.mes1_label, dashboardData.previsao.mes2_label, dashboardData.previsao.mes3_label];
-
-                const currencyChartOptions = {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } }, x: { grid: { display: false } } },
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } }
-                };
-                const integerChartOptions = {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } },
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } }
-                };
                 
-                new Chart(document.getElementById('faturamentoChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Faturamento', data: Object.values(dashboardData.faturamento), backgroundColor: 'rgba(79, 70, 229, 0.6)', borderColor: 'rgba(79, 70, 229, 1)', borderRadius: 4 }] }, options: currencyChartOptions });
-                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: Object.values(dashboardData.vendas), backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: currencyChartOptions });
-                new Chart(document.getElementById('bmPendenteChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(bmItensData), backgroundColor: 'rgba(220, 38, 38, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderRadius: 4 }] }, options: integerChartOptions });
-                new Chart(document.getElementById('relatoriosPendentesChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(relatoriosItensData), backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)', borderRadius: 4 }] }, options: integerChartOptions });
-                new Chart(document.getElementById('previsaoChart').getContext('2d'), {
-                    type: 'line', 
-                    data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, 
+                const currencyChartOptions = { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } }, 
+                        x: { grid: { display: false } } 
+                    }, 
+                    plugins: { 
+                        legend: { display: true, position: 'top', labels: { boxWidth:15, padding:15 } }, 
+                        tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } 
+                    } 
+                };
+                const integerChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } } };
+                const sparklineChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { display: false } }, plugins: { legend: { display: false }, tooltip: { enabled: false } }, elements: { point: { radius: 0 }, line: { borderWidth: 2 } } };
+                
+                // Gráfico Faturamento com linha de Contas a Receber
+                new Chart(document.getElementById('faturamentoChart').getContext('2d'), { 
+                    type: 'bar', 
+                    data: { 
+                        labels: chartLabelsPeriodo, 
+                        datasets: [
+                            { 
+                                label: 'Faturamento', 
+                                data: faturamentoMensalValores, 
+                                backgroundColor: 'rgba(79, 70, 229, 0.6)', 
+                                borderColor: 'rgba(79, 70, 229, 1)', 
+                                borderRadius: 4,
+                                order: 2 
+                            },
+                            {
+                                type: 'line', 
+                                label: 'Contas a Receber',
+                                data: contasAReceberFaturamentoValores,
+                                borderColor: 'rgba(220, 38, 38, 1)', 
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(220, 38, 38, 1)',
+                                order: 1 
+                            }
+                        ] 
+                    }, 
                     options: currencyChartOptions 
                 });
+
+                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...currencyChartOptions, plugins: {...currencyChartOptions.plugins, legend: {display: false}}} });
+                new Chart(document.getElementById('bmPendenteChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(bmItensData), backgroundColor: 'rgba(220, 38, 38, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderRadius: 4 }] }, options: integerChartOptions });
+                new Chart(document.getElementById('relatoriosPendentesChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(relatoriosItensData), backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)', borderRadius: 4 }] }, options: integerChartOptions });
+                new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...currencyChartOptions, plugins: {...currencyChartOptions.plugins, legend: {display: false}}} });
+
+                // Sparklines
+                new Chart(document.getElementById('faturamentoSparklineChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Tendência Faturamento', data: faturamentoMensalValores, borderColor: 'rgba(79, 70, 229, 0.8)', fill: false }] }, options: sparklineChartOptions });
+                new Chart(document.getElementById('vendasSparklineChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Tendência Vendas', data: vendasMensalValores, borderColor: 'rgba(22, 163, 74, 0.8)', fill: false }] }, options: sparklineChartOptions });
 
             } catch (error) {
                 console.error("ERRO GERAL durante a inicialização:", error);
