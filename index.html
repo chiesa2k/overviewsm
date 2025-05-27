@@ -21,10 +21,9 @@
             color: #1f2937; margin-bottom: 0.5rem; flex-shrink: 0;
         }
         .card-title i { margin-right: 0.5rem; }
-        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; /* Margem restaurada */ flex-shrink: 0; }
+        .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; flex-shrink: 0; }
         .pending-value { color: #dc2626; }
-        /* .sparkline-container removido */
-        .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 150px; }
+        .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 180px; /* Aumentei um pouco para compensar ausência de legenda interna */ }
         .monthly-data {
             flex-shrink: 0; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;
         }
@@ -42,6 +41,8 @@
         .historical-total span { font-weight: 600; color: #4b5563; }
         .var-positive { color: #16a34a; }
         .var-negative { color: #dc2626; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 0.5rem; }
+        .legend-color-box { width: 1rem; height: 1rem; margin-right: 0.5rem; border-radius: 0.125rem; }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -127,7 +128,37 @@
         </section>
     </main>
 
-    <footer class="mt-10 text-center text-sm text-gray-500">
+    <div class="mt-8 text-sm text-gray-700 bg-white p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-3 text-gray-800">Legenda dos Gráficos</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(79, 70, 229, 0.6);"></div>
+                <span>Faturamento (barra azul)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(220, 38, 38, 1); border: 1px solid rgba(220, 38, 38, 1);"></div>
+                <span>Contas a Receber (linha vermelha no gráfico de Faturamento)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(22, 163, 74, 0.6);"></div>
+                <span>Vendas (barra verde)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(220, 38, 38, 0.6);"></div>
+                <span>Itens de BM Pendente (barra vermelha)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(249, 115, 22, 0.6);"></div>
+                <span>Itens de Relatórios Pendentes (barra laranja)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-box" style="background-color: rgba(37, 99, 235, 1); border: 1px solid rgba(37, 99, 235, 1);"></div>
+                <span>Previsão de Faturamento (linha azul)</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-6 text-center text-sm text-gray-500"> 
         Dados referentes ao período de Janeiro a Maio. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>. 
     </footer>
 
@@ -138,7 +169,7 @@
         const dashboardData = {
             faturamento: { 
                 jan: 2883336.16, fev: 4613615.51, mar: 1982499.82, 
-                abr: 3876024.58, mai: 4072899.90
+                abr: 3876024.58, mai: 2893317.17
             },
             contasAReceberFaturamento: { 
                 jan: 0, fev: 0, mar: 682629.37,    
@@ -242,7 +273,7 @@
                 const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI'];
                 const chartLabelsPrevisao = [dashboardData.previsao.mes1_label, dashboardData.previsao.mes2_label, dashboardData.previsao.mes3_label];
                 
-                const baseCurrencyChartOptions = { 
+                const baseChartOptions = { 
                     responsive: true, maintainAspectRatio: false, 
                     scales: { 
                         y: { beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } }, 
@@ -250,12 +281,12 @@
                     }, 
                     plugins: { 
                         tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } 
+                        // Legenda será configurada por gráfico agora
                     } 
                 };
                 const integerChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } } };
-                // const sparklineChartOptions removido
-
-                // Gráfico Faturamento com linha de Contas a Receber e legenda abaixo
+                
+                // Gráfico Faturamento com linha de Contas a Receber e legenda desabilitada
                 new Chart(document.getElementById('faturamentoChart').getContext('2d'), { 
                     type: 'bar', 
                     data: { 
@@ -282,25 +313,21 @@
                             }
                         ] 
                     }, 
-                    options: {
-                        ...baseCurrencyChartOptions, // Usa a base
-                        plugins: { // Sobrescreve/adiciona plugins
-                            ...baseCurrencyChartOptions.plugins, // Mantém tooltip callback
+                    options: { // Opções específicas para este gráfico
+                        ...baseChartOptions,
+                        plugins: {
+                            ...baseChartOptions.plugins, // Mantém o tooltip
                             legend: { 
-                                display: true, 
-                                position: 'bottom', // Legenda abaixo
-                                labels: { boxWidth:15, padding:20 } 
+                                display: false // Legenda desabilitada DENTRO do gráfico
                             }
                         }
                     } 
                 });
 
-                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...baseCurrencyChartOptions, plugins: {...baseCurrencyChartOptions.plugins, legend: {display: false}}} });
+                new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...baseChartOptions, plugins: {...baseChartOptions.plugins, legend: {display: false}}} });
                 new Chart(document.getElementById('bmPendenteChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(bmItensData), backgroundColor: 'rgba(220, 38, 38, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderRadius: 4 }] }, options: integerChartOptions });
                 new Chart(document.getElementById('relatoriosPendentesChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(relatoriosItensData), backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)', borderRadius: 4 }] }, options: integerChartOptions });
-                new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...baseCurrencyChartOptions, plugins: {...baseCurrencyChartOptions.plugins, legend: {display: false}}} });
-
-                // Sparklines removidos
+                new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...baseChartOptions, plugins: {...baseChartOptions.plugins, legend: {display: false}}} });
 
             } catch (error) {
                 console.error("ERRO GERAL durante a inicialização:", error);
