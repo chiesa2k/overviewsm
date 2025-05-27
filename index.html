@@ -23,7 +23,7 @@
         .card-title i { margin-right: 0.5rem; }
         .total-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; flex-shrink: 0; }
         .pending-value { color: #dc2626; }
-        .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 180px; /* Aumentei um pouco para compensar ausência de legenda interna */ }
+        .chart-container { position: relative; flex-grow: 1; margin-bottom: 1rem; min-height: 180px; }
         .monthly-data {
             flex-shrink: 0; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;
         }
@@ -164,35 +164,52 @@
 
     <script>
         // ========================================================================
-        // DADOS DO DASHBOARD
+        // DADOS DO DASHBOARD - ATUALIZADOS COM OS NOVOS VALORES
         // ========================================================================
         const dashboardData = {
             faturamento: { 
-                jan: 2883336.16, fev: 4613615.51, mar: 1982499.82, 
-                abr: 3876024.58, mai: 2893317.17
+                jan: 2883336.16, 
+                fev: 4596221.51, 
+                mar: 1919979.82, 
+                abr: 3881018.06, 
+                mai: 4125649.92
             },
-            contasAReceberFaturamento: { 
-                jan: 0, fev: 0, mar: 682629.37,    
-                abr: 1383667.71, mai: 168697.00     
+            contasAReceberFaturamento: { // Mantidos da versão anterior, conforme solicitado
+                jan: 0, 
+                fev: 0, 
+                mar: 682629.37,    
+                abr: 1383667.71, 
+                mai: 168697.00     
             },
             vendas: { 
-                jan: 3532621.29, fev: 6074721.74, mar: 1299044.99, 
-                abr: 4627709.99, mai: 989577.57
+                jan: 3532621.29, 
+                fev: 6006947.74, 
+                mar: 1245245.49, 
+                abr: 4836804.24, 
+                mai: 2869980.37
             },
-            bmPendente: {
-                jan: 9, fev: 3, mar: 11, abr: 36, mai: 22,
-                valorTotalPeriodo: 4917053.39 
+            bmPendente: { // Itens e valor total do período atualizados
+                jan: 14, 
+                fev: 3, 
+                mar: 9, 
+                abr: 31, 
+                mai: 29,
+                valorTotalPeriodo: 6393349.71 
             },
-            relatoriosPendentes: {
-                jan: 9, fev: 4, mar: 7, abr: 6, mai: 7,
-                valorTotalPeriodo: 834348.00 
+            relatoriosPendentes: { // Itens e valor total do período atualizados
+                jan: 7, 
+                fev: 3, 
+                mar: 5, 
+                abr: 4, 
+                mai: 20,
+                valorTotalPeriodo: 1424175.50 
             },
-            previsao: { 
-                mes1_label: "JUN", mes1_valor: 1504698.98,
-                mes2_label: "JUL", mes2_valor: 373255.00,
+            previsao: { // Previsão atualizada
+                mes1_label: "JUN", mes1_valor: 1560645.98,
+                mes2_label: "JUL", mes2_valor: 1074867.00,
                 mes3_label: "AGO", mes3_valor: 0.00,
             },
-            dataAtualizacao: "26/05/2025" 
+            dataAtualizacao: "27/05/2025" // Data atualizada para hoje, como exemplo
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -281,12 +298,10 @@
                     }, 
                     plugins: { 
                         tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } 
-                        // Legenda será configurada por gráfico agora
                     } 
                 };
                 const integerChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } } };
                 
-                // Gráfico Faturamento com linha de Contas a Receber e legenda desabilitada
                 new Chart(document.getElementById('faturamentoChart').getContext('2d'), { 
                     type: 'bar', 
                     data: { 
@@ -313,12 +328,12 @@
                             }
                         ] 
                     }, 
-                    options: { // Opções específicas para este gráfico
+                    options: { 
                         ...baseChartOptions,
                         plugins: {
-                            ...baseChartOptions.plugins, // Mantém o tooltip
+                            ...baseChartOptions.plugins, 
                             legend: { 
-                                display: false // Legenda desabilitada DENTRO do gráfico
+                                display: false 
                             }
                         }
                     } 
