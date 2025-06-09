@@ -168,16 +168,16 @@
 
     <script>
         // ========================================================================
-        // DADOS DO DASHBOARD - ATUALIZADOS CONFORME ÚLTIMA SOLICITAÇÃO
+        // DADOS DO DASHBOARD - ATUALIZADOS COM OS NOVOS VALORES
         // ========================================================================
         const dashboardData = {
             faturamento: { 
                 jan: 3051082.16, 
                 fev: 4596221.51, 
-                mar: 1982499.82, // Corrigido para .82 conforme imagem
-                abr: 3881018.06, 
+                mar: 1982499.84, // Arredondado
+                abr: 3881018.07, 
                 mai: 4061925.92,
-                jul: 589163.75   // Adicionado JUL
+                jul: 2267222.00
             },
             contasAReceberFaturamento: { 
                 jan: 0, 
@@ -185,40 +185,40 @@
                 mar: 682629.37,    
                 abr: 1383667.71, 
                 mai: 168697.00,
-                jul: 0 // Adicionado JUL (manter 0 se não houver dado específico)
+                jul: 0 
             },
             vendas: { 
                 jan: 3532621.29, 
-                fev: 6005642.74, 
-                mar: 1441352.49, 
+                fev: 6005642.75, 
+                mar: 1439512.49, 
                 abr: 4974198.24, 
-                mai: 3280930.77,
-                jul: 240137.76  // Adicionado JUL
+                mai: 3327617.57,
+                jul: 2047152.76 
             },
             bmPendente: { 
                 jan: 15, 
                 fev: 3, 
                 mar: 6, 
-                abr: 27, 
-                mai: 29,
-                jul: 14, // Adicionado JUL (itens)
-                valorTotalPeriodo: 6524294.61 
+                abr: 26, 
+                mai: 27,
+                jul: 20,
+                valorTotalPeriodo: 5158255.91
             },
             relatoriosPendentes: { 
-                jan: 7, 
+                jan: 4, 
                 fev: 4, 
                 mar: 4, 
                 abr: 2, 
-                mai: 15,
-                jul: 0,  // Adicionado JUL (itens)
-                valorTotalPeriodo: 924552.25 
+                mai: 12,
+                jul: 0,
+                valorTotalPeriodo: 712935.25
             },
-            previsao: { // Previsão para JUL, AGO, SET
+            previsao: { 
                 mes1_label: "JUL", mes1_valor: 1074867.00,
                 mes2_label: "AGO", mes2_valor: 0.00,
                 mes3_label: "SET", mes3_valor: 0.00,
             },
-            dataAtualizacao: "05/06/2025" 
+            dataAtualizacao: "09/06/2025" 
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -260,7 +260,7 @@
                 const faturamentoTotal = faturamentoMensalValores.reduce((a, b) => a + b, 0);
                 const vendasTotal = vendasMensalValores.reduce((a, b) => a + b, 0);
                 
-                const numeroDeMeses = 6; // Atualizado para 6 meses (Jan-Mai, Jul)
+                const numeroDeMeses = 6;
                 const faturamentoMedia = faturamentoTotal / numeroDeMeses;
                 const vendasMedia = vendasTotal / numeroDeMeses;
 
@@ -313,7 +313,7 @@
                 updateVariationElement('previsao-var-mes3', dashboardData.previsao.mes3_valor, dashboardData.previsao.mes2_valor);
                 updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
 
-                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUL']; // Atualizado
+                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUL'];
                 const chartLabelsPrevisao = [dashboardData.previsao.mes1_label, dashboardData.previsao.mes2_label, dashboardData.previsao.mes3_label];
                 
                 const baseChartOptions = { 
