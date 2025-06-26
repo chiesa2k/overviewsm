@@ -160,7 +160,6 @@
         <h3 class="text-lg font-semibold mb-3 text-gray-800">Legenda dos Gráficos</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
             <div class="legend-item"><div class="legend-color-box" style="background-color: rgba(79, 70, 229, 0.6);"></div><span>Faturamento (barra azul)</span></div>
-            <div class="legend-item"><div class="legend-color-box" style="background-color: rgba(220, 38, 38, 1); border: 1px solid rgba(220, 38, 38, 1);"></div><span>Contas a Receber (linha)</span></div>
             <div class="legend-item"><div class="legend-color-box" style="background-color: rgba(22, 163, 74, 0.6);"></div><span>Vendas (barra verde)</span></div>
             <div class="legend-item"><div class="legend-color-box" style="background-color: rgba(220, 38, 38, 0.6);"></div><span>BM Pendente (itens)</span></div>
             <div class="legend-item"><div class="legend-color-box" style="background-color: rgba(249, 115, 22, 0.6);"></div><span>Relatórios Pendentes (itens)</span></div>
@@ -185,32 +184,37 @@
         // DADOS DO DASHBOARD 
         // ========================================================================
         const dashboardData = {
-            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1982499.84, abr: 3964568.07, mai: 4056071.92, jun: 4536907.17 },
-            contasAReceberFaturamento: { jan: 0, fev: 0, mar: 682629.37, abr: 1383667.71, mai: 168697.00, jun: 0 },
-            vendas: { jan: 3532621.29, fev: 5963052.75, mar: 1518354.49, abr: 5049647.99, mai: 3578261.57, jun: 3253046.89 },
-            bmPendente: { jan: 9, fev: 4, mar: 5, abr: 24, mai: 22, jun: 24, valorTotalPeriodo: 3275420.41 },
-            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 8, jun: 3, valorTotalPeriodo: 363843.25 },
-            previsao: { mes1_label: "JUL", mes1_valor: 1520408.00, mes2_label: "AGO", mes2_valor: 533128.56, mes3_label: "SET", mes3_valor: 0.00 },
+            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1982499.84, abr: 3964568.07, mai: 4056071.92, jun: 4630370.42 },
+            vendas: { jan: 3532621.29, fev: 5947082.50, mar: 1518354.49, abr: 5049647.99, mai: 3599738.82, jun: 3294336.39 },
+            bmPendente: { jan: 9, fev: 4, mar: 5, abr: 24, mai: 25, jun: 32, valorTotalPeriodo: 4422008.41 },
+            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 9, jun: 5, valorTotalPeriodo: 459646.25 },
+            previsao: { mes1_label: "JUL", mes1_valor: 1541919.00, mes2_label: "AGO", mes2_valor: 533128.56, mes3_label: "SET", mes3_valor: 0.00 },
             
             analiseFaturamento: {
-                origem2025: [342560.00, 110931.50, 424238.50, 1063761.94, 2246278.82, 1225136.17],
-                origem2024: [2490428.16, 4450399.01, 1028239.55, 2761518.77, 1696959.10, 3288771.00],
+                origem2025: [342560.00, 110931.50, 424238.50, 1063761.94, 2246278.82, 1471277.15],
+                origem2024: [2490428.16, 4450399.01, 1028239.55, 2761518.77, 1696959.10, 3382234.25],
                 origemOld:  [221020.00, 34891.00, 527761.79, 139287.36, 89934.00, 0.00] 
             },
             analiseVendas: {
-                origem2025: [1104011.29, 739059.25, 977772.98, 2676332.99, 3016162.82, 1304550.89],
-                origem2024: [2428610.00, 2995153.37, 522681.51, 2296433.00, 501474.75, 1875738.00],
+                origem2025: [1104011.29, 723089.00, 977772.98, 2676332.99, 3037640.07, 1329611.89],
+                origem2024: [2428610.00, 2995153.37, 522681.51, 2296433.00, 501474.75, 1891966.50],
                 origemOld:  [0.00, 2133982.13, 0.00, 76882.00, 60624.00, 72758.00]
             },
 
-            dataAtualizacao: "25/06/2025" 
+            dataAtualizacao: "26/06/2025" 
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
         // ========================================================================
 
-        const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const formatInt = (value) => value.toLocaleString('pt-BR');
+        const formatCurrency = (value) => {
+            if (typeof value !== 'number') return (0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+        const formatInt = (value) => {
+            if (typeof value !== 'number') return '0';
+            return value.toLocaleString('pt-BR');
+        };
         const formatAxisTick = (value, isCurrency = true) => {
             let numStr;
             if (value >= 1000000) numStr = (value / 1000000).toFixed(1) + 'M';
@@ -240,7 +244,6 @@
 
                 const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN'];
                 const faturamentoMensalValores = chartLabelsPeriodo.map(m => dashboardData.faturamento[m.toLowerCase()] || 0);
-                const contasAReceberFaturamentoValores = chartLabelsPeriodo.map(m => dashboardData.contasAReceberFaturamento[m.toLowerCase()] || 0);
                 const vendasMensalValores = chartLabelsPeriodo.map(m => dashboardData.vendas[m.toLowerCase()] || 0);
                 const faturamentoTotal = faturamentoMensalValores.reduce((a, b) => a + b, 0);
                 const vendasTotal = vendasMensalValores.reduce((a, b) => a + b, 0);
@@ -280,7 +283,6 @@
                 updateVariationElement('previsao-var-mes3', dashboardData.previsao.mes3_valor, dashboardData.previsao.mes2_valor);
                 updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
 
-                // --- ATUALIZA TOTAIS DOS CARDS DE ANÁLISE ---
                 const fatOrigemTotal2025 = dashboardData.analiseFaturamento.origem2025.reduce((a, b) => a + b, 0);
                 const fatOrigemTotal2024 = dashboardData.analiseFaturamento.origem2024.reduce((a, b) => a + b, 0);
                 const fatOrigemTotalOld = dashboardData.analiseFaturamento.origemOld.reduce((a, b) => a + b, 0);
@@ -295,20 +297,18 @@
                 updateElement('vend-origem-total-2024', vendOrigemTotal2024, formatCurrency);
                 updateElement('vend-origem-total-old', vendOrigemTotalOld, formatCurrency);
 
-                // --- CRIAÇÃO DOS GRÁFICOS ---
                 const chartLabelsPrevisao = [dashboardData.previsao.mes1_label, dashboardData.previsao.mes2_label, dashboardData.previsao.mes3_label];
                 
                 const baseChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } }, x: { grid: { display: false } } }, plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } } };
                 const integerChartOptions = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (val) => formatAxisTick(val, false) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatInt(c.parsed.y)}` } } } };
                 const stackedChartOptions = { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { callback: (val) => formatAxisTick(val, true) } } }, plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${formatCurrency(c.parsed.y)}` } } } };
 
-                new Chart(document.getElementById('faturamentoChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Faturamento', data: faturamentoMensalValores, backgroundColor: 'rgba(79, 70, 229, 0.6)', borderColor: 'rgba(79, 70, 229, 1)', borderRadius: 4, order: 2 }, { type: 'line', label: 'Contas a Receber', data: contasAReceberFaturamentoValores, borderColor: 'rgba(220, 38, 38, 1)', borderWidth: 2, fill: false, pointRadius: 3, pointBackgroundColor: 'rgba(220, 38, 38, 1)', order: 1 }] }, options: { ...baseChartOptions, plugins: { ...baseChartOptions.plugins, legend: { display: false } } } });
+                new Chart(document.getElementById('faturamentoChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Faturamento', data: faturamentoMensalValores, backgroundColor: 'rgba(79, 70, 229, 0.6)', borderColor: 'rgba(79, 70, 229, 1)', borderRadius: 4 }] }, options: { ...baseChartOptions, plugins: { ...baseChartOptions.plugins, legend: { display: false } } } });
                 new Chart(document.getElementById('vendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Vendas', data: vendasMensalValores, backgroundColor: 'rgba(22, 163, 74, 0.6)', borderColor: 'rgba(22, 163, 74, 1)', borderRadius: 4 }] }, options: {...baseChartOptions, plugins: {...baseChartOptions.plugins, legend: {display: false}}} });
                 new Chart(document.getElementById('bmPendenteChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(bmItensData), backgroundColor: 'rgba(220, 38, 38, 0.6)', borderColor: 'rgba(220, 38, 38, 1)', borderRadius: 4 }] }, options: integerChartOptions });
                 new Chart(document.getElementById('relatoriosPendentesChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [{ label: 'Itens', data: Object.values(relatoriosItensData), backgroundColor: 'rgba(249, 115, 22, 0.6)', borderColor: 'rgba(249, 115, 22, 1)', borderRadius: 4 }] }, options: integerChartOptions });
                 new Chart(document.getElementById('previsaoChart').getContext('2d'), { type: 'line', data: { labels: chartLabelsPrevisao, datasets: [{ label: 'Previsão', data: [dashboardData.previsao.mes1_valor, dashboardData.previsao.mes2_valor, dashboardData.previsao.mes3_valor], backgroundColor: 'rgba(37, 99, 235, 0.1)', borderColor: 'rgba(37, 99, 235, 1)', fill: true, tension: 0.1 }] }, options: {...baseChartOptions, plugins: {...baseChartOptions.plugins, legend: {display: false}}} });
             
-                // --- NOVOS GRÁFICOS DE ANÁLISE ---
                 new Chart(document.getElementById('origemFaturamentoChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [ { label: 'Origem 2025', data: dashboardData.analiseFaturamento.origem2025, backgroundColor: '#3b82f6' }, { label: 'Origem 2024', data: dashboardData.analiseFaturamento.origem2024, backgroundColor: '#f59e0b' }, { label: 'Origem < 2024', data: dashboardData.analiseFaturamento.origemOld, backgroundColor: '#84cc16' } ] }, options: stackedChartOptions });
                 new Chart(document.getElementById('origemVendasChart').getContext('2d'), { type: 'bar', data: { labels: chartLabelsPeriodo, datasets: [ { label: 'Origem 2025', data: dashboardData.analiseVendas.origem2025, backgroundColor: '#3b82f6' }, { label: 'Origem 2024', data: dashboardData.analiseVendas.origem2024, backgroundColor: '#f59e0b' }, { label: 'Origem < 2024', data: dashboardData.analiseVendas.origemOld, backgroundColor: '#84cc16' } ] }, options: stackedChartOptions });
             
