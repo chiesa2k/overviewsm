@@ -67,7 +67,7 @@
                 <p>MAR: <span id="faturamento-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="faturamento-abr">R$ 0,00</span></p>
                 <p>MAI: <span id="faturamento-mai">R$ 0,00</span></p> 
-                <p>JUL: <span id="faturamento-jul">R$ 0,00</span></p> 
+                <p>JUN: <span id="faturamento-jun">R$ 0,00</span></p> 
                 <p class="media-mensal">Média Mensal: <span id="faturamento-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
@@ -82,14 +82,14 @@
                 <p>MAR: <span id="vendas-mar">R$ 0,00</span></p>
                 <p>ABR: <span id="vendas-abr">R$ 0,00</span></p>
                 <p>MAI: <span id="vendas-mai">R$ 0,00</span></p> 
-                <p>JUL: <span id="vendas-jul">R$ 0,00</span></p> 
+                <p>JUN: <span id="vendas-jun">R$ 0,00</span></p> 
                 <p class="media-mensal">Média Mensal: <span id="vendas-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
 
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="alert-circle" style="color: #dc2626;"></i>BM Pendente</h2>
-            <p class="card-subtitle-custom">Itens Pendentes (Jan-Mai, Jul)</p>
+            <p class="card-subtitle-custom">Itens Pendentes (Jan-Jun)</p>
             <div class="card-main-metric" id="bm-pendente-itens-total">0</div>
             <div class="chart-container"><canvas id="bmPendenteChart"></canvas></div>
             <div class="monthly-data text-sm">
@@ -98,14 +98,14 @@
                 <p>MAR: <span id="bm-pendente-mar">0</span> itens</p>
                 <p>ABR: <span id="bm-pendente-abr">0</span> itens</p>
                 <p>MAI: <span id="bm-pendente-mai">0</span> itens</p>
-                <p>JUL: <span id="bm-pendente-jul">0</span> itens</p>
+                <p>JUN: <span id="bm-pendente-jun">0</span> itens</p>
                 <p class="historical-total">Valor Total (Período): <span id="bm-pendente-total-periodo" class="font-semibold pending-value">R$ 0,00</span></p>
             </div>
         </section>
 
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="file-warning" style="color: #f97316;"></i>Relatórios Pendentes</h2>
-            <p class="card-subtitle-custom">Itens Pendentes (Jan-Mai, Jul)</p>
+            <p class="card-subtitle-custom">Itens Pendentes (Jan-Jun)</p>
             <div class="card-main-metric" id="relatorios-pendentes-itens-total">0</div>
             <div class="chart-container"><canvas id="relatoriosPendentesChart"></canvas></div>
             <div class="monthly-data text-sm">
@@ -114,7 +114,7 @@
                 <p>MAR: <span id="relatorios-pendentes-mar">0</span> itens</p>
                 <p>ABR: <span id="relatorios-pendentes-abr">0</span> itens</p>
                 <p>MAI: <span id="relatorios-pendentes-mai">0</span> itens</p>
-                <p>JUL: <span id="relatorios-pendentes-jul">0</span> itens</p>
+                <p>JUN: <span id="relatorios-pendentes-jun">0</span> itens</p>
                 <p class="historical-total">Valor Total (Período): <span id="relatorios-pendentes-total-periodo" class="font-semibold pending-value">R$ 0,00</span></p>
             </div>
         </section>
@@ -176,7 +176,7 @@
     </div>
 
     <footer class="mt-6 text-center text-sm text-gray-500"> 
-        Dados referentes ao período de Janeiro a Maio e Julho. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>. 
+        Dados referentes ao período de Janeiro a Junho. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>. 
     </footer>
 
     <script>
@@ -184,9 +184,9 @@
         // DADOS DO DASHBOARD 
         // ========================================================================
         const dashboardData = {
-            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1982499.84, abr: 3982318.07, mai: 4056071.92, jul: 4829286.42 },
-            vendas: { jan: 3532621.29, fev: 5947082.50, mar: 1518354.49, abr: 5053528.19, mai: 3606007.37, jul: 3465755.14 },
-            bmPendente: { jan: 9, fev: 4, mar: 5, abr: 22, mai: 19, jun: 31, valorTotalPeriodo: 4287762.84 },
+            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1982499.84, abr: 3982318.07, mai: 4056071.92, jun: 4829286.42 },
+            vendas: { jan: 3532621.29, fev: 5947082.50, mar: 1518354.49, abr: 5053528.19, mai: 3606007.37, jun: 3465755.14 },
+            bmPendente: { jan: 9, fev: 4, mar: 5, abr: 22, mai: 19, jun: 29, valorTotalPeriodo: 4287762.84 },
             relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 6, jun: 5, valorTotalPeriodo: 442592.80 },
             previsao: { mes1_label: "JUL", mes1_valor: 1602554.69, mes2_label: "AGO", mes2_valor: 778759.56, mes3_label: "SET", mes3_valor: 0.00 },
             
@@ -201,7 +201,7 @@
                 origemOld:  [0.00, 2133982.13, 0.00, 76882.00, 60624.00, 118904.75]
             },
 
-            dataAtualizacao: "02/07/2025" 
+            dataAtualizacao: "03/07/2025" 
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -242,7 +242,7 @@
             try {
                 lucide.createIcons();
 
-                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUL'];
+                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN'];
                 const faturamentoMensalValores = chartLabelsPeriodo.map(m => dashboardData.faturamento[m.toLowerCase()] || 0);
                 const vendasMensalValores = chartLabelsPeriodo.map(m => dashboardData.vendas[m.toLowerCase()] || 0);
                 const faturamentoTotal = faturamentoMensalValores.reduce((a, b) => a + b, 0);
