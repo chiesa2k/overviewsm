@@ -188,24 +188,24 @@
         // DADOS DO DASHBOARD 
         // ========================================================================
         const dashboardData = {
-            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1982499.84, abr: 3982318.07, mai: 4073321.92, jun: 5143314.38, jul: 3641354.30 },
-            vendas: { jan: 3532621.29, fev: 4655478.47, mar: 1573321.99, abr: 5037318.39, mai: 3691021.37, jun: 3456996.64, jul: 2441318.91 },
-            bmPendente: { jan: 9, fev: 3, mar: 4, abr: 13, mai: 14, jun: 22, jul: 37, valorTotalPeriodo: 4824061.62 },
-            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 5, jun: 10, jul: 16, valorTotalPeriodo: 1148301.42 },
-            previsao: { mes1_label: "JUL", mes1_valor: 1813875.56, mes2_label: "AGO", mes2_valor: 0.00, mes3_label: "SET", mes3_valor: 0.00 },
+            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1919979.84, abr: 3982318.07, mai: 4073321.92, jun: 5149914.38, jul: 3836647.23 },
+            vendas: { jan: 3532621.29, fev: 4703534.47, mar: 1510801.99, abr: 5053068.39, mai: 3690838.37, jun: 3478366.52, jul: 2680098.01 },
+            bmPendente: { jan: 9, fev: 3, mar: 4, abr: 13, mai: 14, jun: 22, jul: 43, valorTotalPeriodo: 5045632.31 },
+            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 5, jun: 10, jul: 13, valorTotalPeriodo: 816344.03 },
+            previsao: { mes1_label: "JUL", mes1_valor: 1975148.36, mes2_label: "AGO", mes2_valor: 100920.00, mes3_label: "SET", mes3_valor: 100920.00 },
             
             analiseFaturamento: {
-                origem2025: [342560.00, 110931.50, 426498.50, 1063761.94, 2286428.82, 1761080.13, 0],
+                origem2025: [342560.00, 110931.50, 426498.50, 1063761.94, 2286428.82, 1767680.13, 0],
                 origem2024: [2490428.16, 4450399.01, 1028239.55, 2779268.77, 1696959.10, 3382234.25, 0],
                 origemOld:  [221020.00, 34891.00, 527761.79, 139287.36, 89934.00, 0.00, 0] 
             },
             analiseVendas: {
-                origem2025: [1104011.29, 866755.00, 1050640.48, 2664003.39, 3128922.62, 1446125.39, 0],
-                origem2024: [2428610.00, 2710264.92, 522681.51, 2296433.00, 501474.75, 1891966.50, 0],
+                origem2025: [1104011.29, 866755.00, 1050640.48, 2679753.39, 3128739.62, 1467495.27, 0],
+                origem2024: [2428610.00, 2758320.92, 460161.51, 2296433.00, 501474.75, 1891966.50, 0],
                 origemOld:  [0.00, 1078458.55, 0.00, 76882.00, 60624.00, 118904.75, 0]
             },
 
-            dataAtualizacao: "23/07/2025" 
+            dataAtualizacao: "22/07/2025" 
         };
         // ========================================================================
         // FIM DA ÁREA DE DADOS
@@ -285,7 +285,7 @@
                 updateElement('previsao-mes3-valor', dashboardData.previsao.mes3_valor, formatCurrency);
                 updateVariationElement('previsao-var-mes2', dashboardData.previsao.mes2_valor, dashboardData.previsao.mes1_valor);
                 updateVariationElement('previsao-var-mes3', dashboardData.previsao.mes3_valor, dashboardData.previsao.mes2_valor);
-                updateElement('ultima-atualizacao', dashboardData.dataAtualizacao);
+                updateElement('ultima-atualizacao', new Date().toLocaleDateString('pt-BR'));
 
                 const fatOrigemTotal2025 = dashboardData.analiseFaturamento.origem2025.reduce((a, b) => a + b, 0);
                 const fatOrigemTotal2024 = dashboardData.analiseFaturamento.origem2024.reduce((a, b) => a + b, 0);
