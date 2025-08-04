@@ -69,6 +69,7 @@
                 <p>MAI: <span id="faturamento-mai">R$ 0,00</span></p> 
                 <p>JUN: <span id="faturamento-jun">R$ 0,00</span></p> 
                 <p>JUL: <span id="faturamento-jul">R$ 0,00</span></p> 
+                <p>AGO: <span id="faturamento-ago">R$ 0,00</span></p> 
                 <p class="media-mensal">Média Mensal: <span id="faturamento-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
@@ -85,13 +86,14 @@
                 <p>MAI: <span id="vendas-mai">R$ 0,00</span></p> 
                 <p>JUN: <span id="vendas-jun">R$ 0,00</span></p> 
                 <p>JUL: <span id="vendas-jul">R$ 0,00</span></p> 
+                <p>AGO: <span id="vendas-ago">R$ 0,00</span></p> 
                 <p class="media-mensal">Média Mensal: <span id="vendas-media" class="font-semibold">R$ 0,00</span></p>
             </div>
         </section>
 
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="alert-circle" style="color: #dc2626;"></i>BM Pendente</h2>
-            <p class="card-subtitle-custom">Itens Pendentes (Jan-Jul)</p>
+            <p class="card-subtitle-custom">Itens Pendentes (Jan-Ago)</p>
             <div class="card-main-metric" id="bm-pendente-itens-total">0</div>
             <div class="chart-container"><canvas id="bmPendenteChart"></canvas></div>
             <div class="monthly-data text-sm">
@@ -102,13 +104,14 @@
                 <p>MAI: <span id="bm-pendente-mai">0</span> itens</p>
                 <p>JUN: <span id="bm-pendente-jun">0</span> itens</p>
                 <p>JUL: <span id="bm-pendente-jul">0</span> itens</p>
+                <p>AGO: <span id="bm-pendente-ago">0</span> itens</p>
                 <p class="historical-total">Valor Total (Período): <span id="bm-pendente-total-periodo" class="font-semibold pending-value">R$ 0,00</span></p>
             </div>
         </section>
 
         <section class="data-card">
             <h2 class="card-title"><i data-lucide="file-warning" style="color: #f97316;"></i>Relatórios Pendentes</h2>
-            <p class="card-subtitle-custom">Itens Pendentes (Jan-Jul)</p>
+            <p class="card-subtitle-custom">Itens Pendentes (Jan-Ago)</p>
             <div class="card-main-metric" id="relatorios-pendentes-itens-total">0</div>
             <div class="chart-container"><canvas id="relatoriosPendentesChart"></canvas></div>
             <div class="monthly-data text-sm">
@@ -119,6 +122,7 @@
                 <p>MAI: <span id="relatorios-pendentes-mai">0</span> itens</p>
                 <p>JUN: <span id="relatorios-pendentes-jun">0</span> itens</p>
                 <p>JUL: <span id="relatorios-pendentes-jul">0</span> itens</p>
+                <p>AGO: <span id="relatorios-pendentes-ago">0</span> itens</p>
                 <p class="historical-total">Valor Total (Período): <span id="relatorios-pendentes-total-periodo" class="font-semibold pending-value">R$ 0,00</span></p>
             </div>
         </section>
@@ -180,7 +184,7 @@
     </div>
 
     <footer class="mt-6 text-center text-sm text-gray-500"> 
-        Dados referentes ao período de Janeiro a Julho. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>. 
+        Dados referentes ao período de Janeiro a Agosto. Última atualização: <span id="ultima-atualizacao">dd/mm/aaaa</span>. 
     </footer>
 
     <script>
@@ -188,21 +192,21 @@
         // DADOS DO DASHBOARD 
         // ========================================================================
         const dashboardData = {
-            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1919979.84, abr: 3982318.07, mai: 4073321.92, jun: 5149914.38, jul: 3837721.23 },
-            vendas: { jan: 3532621.29, fev: 4703534.47, mar: 1510801.99, abr: 5118408.39, mai: 3704782.37, jun: 3478366.52, jul: 3611636.31 },
-            bmPendente: { jan: 9, fev: 3, mar: 4, abr: 13, mai: 14, jun: 22, jul: 53, valorTotalPeriodo: 5213507.19 },
-            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 1, mai: 5, jun: 10, jul: 20, valorTotalPeriodo: 863772.85 },
-            previsao: { mes1_label: "JUL", mes1_valor: 1892852.36, mes2_label: "AGO", mes2_valor: 390027.00, mes3_label: "SET", mes3_valor: 390027.00 },
+            faturamento: { jan: 3051082.16, fev: 4596221.51, mar: 1919979.84, abr: 3982318.07, mai: 4073321.92, jun: 5149914.38, jul: 3837721.23, ago: 2182149.73 },
+            vendas: { jan: 3532621.29, fev: 4826544.46, mar: 1510801.99, abr: 5128852.39, mai: 3704782.37, jun: 3500559.02, jul: 3891201.31, ago: 119700.69 },
+            bmPendente: { jan: 7, fev: 3, mar: 4, abr: 13, mai: 12, jun: 19, jul: 50, ago: 1, valorTotalPeriodo: 3319535.73 },
+            relatoriosPendentes: { jan: 4, fev: 3, mar: 3, abr: 2, mai: 5, jun: 3, jul: 19, ago: 4, valorTotalPeriodo: 1220850.65 },
+            previsao: { mes1_label: "JUL", mes1_valor: 2219064.36, mes2_label: "AGO", mes2_valor: 526882.30, mes3_label: "SET", mes3_valor: 526882.30 },
             
             analiseFaturamento: {
-                origem2025: [342560.00, 110931.50, 426498.50, 1063761.94, 2286428.82, 1767680.13, 0],
-                origem2024: [2490428.16, 4450399.01, 1028239.55, 2779268.77, 1696959.10, 3382234.25, 0],
-                origemOld:  [221020.00, 34891.00, 527761.79, 139287.36, 89934.00, 0.00, 0] 
+                origem2025: [342560.00, 110931.50, 426498.50, 1063761.94, 2286428.82, 1767680.13, 0, 0],
+                origem2024: [2490428.16, 4450399.01, 1028239.55, 2779268.77, 1696959.10, 3382234.25, 1494023.32, 3382234.25],
+                origemOld:  [221020.00, 34891.00, 527761.79, 139287.36, 89934.00, 0.00, 118904.75, 52589.00] 
             },
             analiseVendas: {
-                origem2025: [1104011.29, 866755.00, 1050640.48, 2745093.39, 3142683.62, 1467495.27, 0],
-                origem2024: [2428610.00, 2758320.92, 460161.51, 2296433.00, 501474.75, 1891966.50, 0],
-                origemOld:  [0.00, 1078458.55, 0.00, 76882.00, 60624.00, 118904.75, 0]
+                origem2025: [1104011.29, 864765.00, 1050640.48, 2755537.39, 3142683.62, 1489687.77, 3493405.81, 119700.69],
+                origem2024: [2428610.00, 2777768.56, 460161.51, 2296433.00, 501474.75, 1891966.50, 0, 0],
+                origemOld:  [0.00, 1184010.90, 0.00, 76882.00, 60624.00, 118904.75, 17700.00, 0]
             },
 
             dataAtualizacao: "22/07/2025" 
@@ -246,16 +250,16 @@
             try {
                 lucide.createIcons();
 
-                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL'];
+                const chartLabelsPeriodo = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO'];
                 const faturamentoMensalValores = chartLabelsPeriodo.map(m => dashboardData.faturamento[m.toLowerCase()] || 0);
                 const vendasMensalValores = chartLabelsPeriodo.map(m => dashboardData.vendas[m.toLowerCase()] || 0);
                 const faturamentoTotal = faturamentoMensalValores.reduce((a, b) => a + b, 0);
                 const vendasTotal = vendasMensalValores.reduce((a, b) => a + b, 0);
-                const numeroDeMeses = 7;
+                const numeroDeMeses = 8;
                 const faturamentoMedia = faturamentoTotal / numeroDeMeses;
                 const vendasMedia = vendasTotal / numeroDeMeses;
-                const bmItensData = {jan: dashboardData.bmPendente.jan, fev: dashboardData.bmPendente.fev, mar: dashboardData.bmPendente.mar, abr: dashboardData.bmPendente.abr, mai: dashboardData.bmPendente.mai, jun: dashboardData.bmPendente.jun, jul: dashboardData.bmPendente.jul};
-                const relatoriosItensData = {jan: dashboardData.relatoriosPendentes.jan, fev: dashboardData.relatoriosPendentes.fev, mar: dashboardData.relatoriosPendentes.mar, abr: dashboardData.relatoriosPendentes.abr, mai: dashboardData.relatoriosPendentes.mai, jun: dashboardData.relatoriosPendentes.jun, jul: dashboardData.relatoriosPendentes.jul};
+                const bmItensData = {jan: dashboardData.bmPendente.jan, fev: dashboardData.bmPendente.fev, mar: dashboardData.bmPendente.mar, abr: dashboardData.bmPendente.abr, mai: dashboardData.bmPendente.mai, jun: dashboardData.bmPendente.jun, jul: dashboardData.bmPendente.jul, ago: dashboardData.bmPendente.ago};
+                const relatoriosItensData = {jan: dashboardData.relatoriosPendentes.jan, fev: dashboardData.relatoriosPendentes.fev, mar: dashboardData.relatoriosPendentes.mar, abr: dashboardData.relatoriosPendentes.abr, mai: dashboardData.relatoriosPendentes.mai, jun: dashboardData.relatoriosPendentes.jun, jul: dashboardData.relatoriosPendentes.jul, ago: dashboardData.relatoriosPendentes.ago};
                 const bmItensTotal = Object.values(bmItensData).reduce((a, b) => a + b, 0);
                 const relatoriosItensTotal = Object.values(relatoriosItensData).reduce((a, b) => a + b, 0);
                 const previsaoTotal = dashboardData.previsao.mes1_valor + dashboardData.previsao.mes2_valor + dashboardData.previsao.mes3_valor;
